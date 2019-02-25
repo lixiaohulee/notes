@@ -1,3 +1,102 @@
+### script
+
+---
+
+* 解析器在对script标签内部的代码解析完毕之前 页面中其他内容都不会被加载和显示
+
+* script标签外链js文件时，如果在标签内部嵌入代码，这些代码会被忽略
+
+* script的src属性引入链接，是可以跨域的
+
+* noscript 标签可以包含任何body中的html元素
+
+### 搞懂script标签的defer和async属性
+
+#### 先看普通的脚本
+
+* 浏览器遇到普通的script标签停止解析document
+
+* 请求js文件
+
+* 执行js文件脚本
+
+* 继续解析document
+
+#### defer 延迟脚本
+
+`<script src="d.js" defer></script>
+<script src="e.js" defer></script>`
+
+* 浏览器遇到延迟脚本，不会停止解析document，而是继续解析document并且同时下载d.js e.js
+
+* 下载完了连个js文件，浏览器还是继续接着解析document
+
+* 浏览器解析完doument完毕后。就是加载并显示到</html>后，按照延迟脚本在页面中出现的顺序，在其他同步脚本执行后，DOMcontentloaded事件前依次执行延迟脚本
+
+#### async 异步脚本
+
+`<script src="b.js" async></script>
+<script src="c.js" async></script>`
+
+* 浏览器遇到异步脚本，不会停止解析document，而是继续解析document并且同时下载两个js文件
+
+* 下载完毕后立即执行，两个执行顺序无法确定，谁先谁后，在DOMcontentloaded事件前后都不确定
+
+#### 理解图
+
+![](https://camo.githubusercontent.com/3cfc9c7f3ff4185cd5c2d9d40c03e942b98c6dfd/68747470733a2f2f692e737461636b2e696d6775722e636f6d2f77664c38322e706e67)
+
+#### 结论
+
+* 最理想的情况是将脚本放在head中并设置成延迟脚本，这样能节省一些时间，不然当我们把脚本放在</body>前，需要在解析显示完内容后才请求js文件并解析执行，但问题是defer有一定的兼容性问题，一些老的浏览器不支持和这个属性，所以：如果项目可以保证忽略老的浏览器，优先使用延迟脚本优化，不能忽略的话，放在</body>前依然是最稳妥的方式
+
+
+### 基本概念
+
+* js单行注释和多行注释(块级注释)，多行注释的出了开头和结尾/的* 其他的* 不是必须的 有只是为了提高可读性
+
+* js语句代码结尾应该有分号，但不是必须的。 如果没有分号则由js解析器自己推测在哪里应该插入分号，加上分号是很好的习惯，可以提高性能(解析器不用考虑在哪里加入分号)，防止代码压缩错误等
+
+* 使用var操作符定义的变量将成为该变量所在作用域的局部变量，而在js中只有两类作用域，函数作用域和全局作用域
+
+#### var 声明变量提升
+
+* var变量声明总是在任意代码执行之前处理，在代码任何位置声明的变量都等同于在代码的开头声明，所有变量的声明都是会移动到函数开头或者全局开头. 提升只提升的是声明 而不是赋值
+
+
+* 在全局作用域中，不使用var声明的变量其实是一个全局的属性，因为可以用delete 删除掉，但是var声明的全局变量不行
+
+---
+*2019年2月15日*
+
+---
+
+### 数据类型
+
+* 五种简单数据类型 undefined null string number boolean 一种复杂类型object
+
+* typeof 操作符的返回值有undefined object string boolean function number
+
+* typeof 操作符对于未经声明的变量和声明未赋值的变量都是undefined 但是使用未声明的值会报错
+
+* 显示的赋值声明的变量为undefined是一种明智的选择。想想上面的话
+
+* 如果声明的变量在未来要保存一个对象的话 就优先赋值一个null
+
+
+### Boolean 
+
+* Boolean()转型函数 可以把js中**任何一个类型**的值转化为对应的boolean值
+
+* if else 流程控制语句底层调用的就是强转函数Boolean()
+
+| 数据类型 | 转为true的值 | 转为false的值 |
+| ------- | ---------- | -------------|
+| Boolean |  true | false |
+| String | 任何非空字符串 | 空字符串 |
+| Number | 任何非零数字值（包括无穷大）| 0和NAN|
+| Object | 任何对象 | null | 
+| Undefined | ---- | undefined |
 # 面向对象的程序设计
 ---
 ### *理解对象*
