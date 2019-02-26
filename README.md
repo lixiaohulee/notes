@@ -97,6 +97,35 @@
 | Number | 任何非零数字值（包括无穷大）| 0和NAN|
 | Object | 任何对象 | null | 
 | Undefined | ---- | undefined |
+
+### Number
+
+* 八进制以0开头 在严格模式下是无效的 超出忽略前导0 按照十进制算
+
+* 浮点树值需要的存储空间是整数的两倍。因此js中会不失时机地将浮点数转为整数值 例如小数点后面没有数字的，是0的都会转为整数
+
+#### NaN not a number
+
+* 任何设计NaN的计算结果都是NaN
+
+* NaN 与任何值都不相等 包括自己
+
+* isNaN函数尝试会尝试将参数转化为数值
+
+*2019年2月25日*
+
+#### Number() 转型函数
+
+| 类型   |  值   | 结果 |
+|-------| ----- | ---- |
+| Number | 数字 | 数字|
+| Boolean | true/ false | true => 1 false => 0 |
+| Null | null | 0 |
+| Undefined | undefined | NaN |
+| String | string | 只包含数字(不限于拥有正负号) => 忽略前导0转为数字 空字符串 => 0 合法十六进制转为10进制 浮点数转为浮点数(忽略前导0) 其他的全为NaN|
+| Object | object | 调用valueOf() 按照前面的规则转 当结果是NaN的时候再调用对象的toString()方法|
+
+* js中一加操作符 转化原理同Number()一样
 # 面向对象的程序设计
 ---
 ### *理解对象*
