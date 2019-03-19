@@ -259,6 +259,11 @@
 * 类型不同直接返回false
 
 
+#### 条件操作符
+
+* var variable = isTrue ? true-result : false-result
+
+
 # 面向对象的程序设计
 ---
 ### *理解对象*
