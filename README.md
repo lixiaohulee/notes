@@ -263,6 +263,28 @@
 
 * var variable = isTrue ? true-result : false-result
 
+#### 逗号操作符
+
+* 可以在一条语句中执行多个操作
+
+* 逗号操作符可以用于**赋值** 此时总是返回操作符的最后一项 var name = (1,3,4,5,6)   name => 6
+
+
+### 语句
+
+#### if else
+
+* if(condition) condition可以是任何值任何表达式 如果表达式的值不是Boolean值的话 js会自动调用Boolean()转型函数将其转为一个boolean值
+
+* do while 语句至少执行一次循环体 
+
+* for循环和while循环的能力一样，但是区别是for循环***具有执行循环前定义初始化变量和定义之行循环后要之行的代码的能力*** **记住定义初始化变量只有开始的一次  亲自试的**
+
+* for in 循环遍历对象可枚举的属性
+
+* switch 语句 case可以连续判断两种几种情况 比如这样： `switch(condition) case 1: case 2: case 3: expression` ***case的情况不一定是常量 可以是变量甚至表达式 ***
+
+
 
 # 面向对象的程序设计
 ---
