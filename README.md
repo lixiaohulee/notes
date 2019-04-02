@@ -307,6 +307,17 @@
 * 参数实际上是函数的布局变量
 
 
+### 类型检测
+
+* typeof 操作符是检测string，number，boolean，undefined的最佳工具
+
+* typeof操作符检测对象和null时都返回‘object’
+
+* typeof 函数返回值是‘function’ 实际上typeof操作符会对所有内部实现了[[Call]] 方法的对象都返回‘function’
+
+* instanceof操作符 如果变量是给定引用类型的实例 那么就会返回true intanceof操作符的原理是根据原型链实现的
+
+
 
 # 面向对象的程序设计
 ---
