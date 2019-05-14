@@ -54,3 +54,51 @@ new Promise((resolve, reject) => {
 * promsie的对象的错误具有冒泡性质，就是说无论前面有几个promise实例都会被catch捕获
 
 * **优先使用catch捕获错误，而不是使用then方法的第二参数函数**
+
+* **优先使用catch捕获错误，而不是使用then方法的第二参数函数**
+
+* catch 之后还可以接着使用catch和then
+
+### promise.prototype.finally
+
+* finally 不会管promise的状态到底是什么 总会执行
+
+* finally 不会接受前面的promise的状态改变的回调传值
+
+### promise.all
+
+* promise.all 接受的参数必须含有Interator接口的类型参数，而且其中内容必须包含的promise 如果不是promise则会调用pormise.resolve转化为promise
+
+* 只有参数中的promise的状态都是fulfilled promise.all的状态才回事fulfilled，此时每个promise的返回值组成一个数组作为返回值，
+如果其中有一个是rejected 则会直接rejected 并将第一个rejected的返回值作为返回值
+
+### promise.race
+
+* 相对于promise.all 接受数组或者具有interator接口的的参数，如果某个promise率先改变状态，promise.race的状态就会根据它的状态改变
+
+### promise.resolve
+
+* 将一个对象转化为promise对象
+
+```
+Promise.resolve('foo') === new Promise(resolve => 
+
+resolve('foo'))
+```
+
+* 参数有四种类型： 
+
+1. promise 原封不动的返回
+
+2. thenable对象(一个具有then方法的对象) 转为promise 立即执行then方法
+
+3. 基本数据类型，返回新的promise对象，并直接返回resolved
+
+4. 不带任何参数，直接resolved
+
+### promise.reject
+
+* 返回一个新的promise对象，状态直接是rejected
+
+
+### promise.try
