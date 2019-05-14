@@ -489,6 +489,22 @@ instanceof 虽然能检测出数组但是他有缺点： **instanceof 假设当�
 
 * 缩小范围： reduce 和 reduceRight arr.reduce((pre, next, index, curArr) => {})
 
+### Date
+
+* Date.parse()接受一个指定格式的字符串然后返回一个时间戳
+
+* Date.now()获取当前时间时间戳
+
+* new Date().valueOf() 方法返回时间戳
+
+### RegExp 正则
+
+`/pattern/` `flag` 正则表达式就是pattern和flag的组合体
+
+* g 表示全局匹配并不是在发现匹配到第一个后就立即停止，i是忽略大小写，m是多行匹配
+
+* 正则表达式中的原字符是： ( [ { \ ^ $ | ) ? * + . ] } 在使用这些元字符的时候需要转义
+
 
 
 # 面向对象的程序设计
