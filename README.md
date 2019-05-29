@@ -602,6 +602,44 @@ func = function(num) {
 * ***理解了js中的函数时间就是一个对象，函数名就是保存着函数对象地址的一个指针变量，就能明白我们其实也可以将函数作为普通的变量一样使用，传递，返回等***
 
 
+### 函数内部属性
+
+* arguments类数组对象 这个对象保存着实际传入函数所有的参数，这个对象还是有个属性callee这个属性是一个指针变量，保存着拥有这个函数arguments对象的函数
+
+```
+
+1. 这是一种函数名称高度耦合函数体的阶乘函数
+function factorial(num) {
+   return num <= 1
+              ? 1
+              : num * factorial(num - 1)
+}
+
+2. 利用arguments.callee => factorial的特性
+
+function factorial(num) {
+    return num <= 1
+               ? 1
+               : num * arguments.callee(num - 1)
+}
+```
+
+
+* ***this属性，另一个函数内部特殊对象就是大名鼎鼎的this对象***
+
+1. 对于this的理解和this的指向性问题要记住，this其实是一个指针变量，这个指针变量保存的是当前函数**执行时(千万要记住，这里的执行时非常重要)**需要用到的执行环境对象或者根据我的理解就是**当前函数执行环境所对应的那个变量对象**
+
+2. 在调用函数之前，this的值时不确定的，只有在函数真正执行的时候this的值才会确定下来
+
+* caller属性保存着调用当前函数的函数，如果实在全局作用域中调用函数这个值就是null
+
+* ES5还为arguments对象也定义了一个caller属性，***记住： 这个属性和函数的caller属性不是一个***
+
+* 严格模式访问arguments.callee 和 arguments.caller都会报错，而且如果为函数的caller属性赋值也会报错
+
+* length属性，函数的length属性的意思就是当前函数***希望接受到的参数的个数，记住： 是希望接受到的函数参数个数***
+
+
 
 # 面向对象的程序设计
 ---
