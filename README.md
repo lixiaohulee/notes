@@ -640,6 +640,36 @@ function factorial(num) {
 * length属性，函数的length属性的意思就是当前函数***希望接受到的参数的个数，记住： 是希望接受到的函数参数个数***
 
 
+### 函数的属性和方法
+
+* length属性，length属性的意思就是函数的命名参数的个数
+
+* prototype属性 函数的原型对象
+
+
+### apply 和 call 和 bind
+
+* 这两个方法都是在特定的作用域中调用函数，他们都有可以扩充函数的作用域链的作用
+
+* apply()方法接受两个参数，一个是在函数运行时的作用域，另一个是参数数组或者参数类数组
+
+* call()方法和apply()方法的作用相同，区别在域call是第一个参数还是this，但是其余的参数都是直接传递给函数的，```func.call(this, arg1, arg2, ...)```
+
+* bind(this, arg1,arg2,arg3...) 这个方法会创建一个函数的实例，改实例的this值会绑定在传给bind函数的值，
+
+```
+ function func(){
+ console.log('name')
+ }
+ 
+var newFunc = func.bind(this)
+newFunc === func
+false
+ 
+```
+***注意:*** bind()第一个参数是this的值，而剩余的可以传递参数，在真正的调用时这些参数会加上调用绑定函数实际传入的参数按照顺序作为原函数的参数
+
+
 
 # 面向对象的程序设计
 ---
