@@ -697,6 +697,28 @@ var s2 = s1.substring(2)
 s1 = null
 ```
 
+### Boolean类型
+
+**Boolean基本包装类型的实例重写了valueOf()和toString()方法**
+
+***记住：***使用Boolean转型函数和new Boolean生成一个实例是有区别的，
+new Boolean() 生成实例是一个对象不是Boolean值
+
+```
+var falseObj = new Boolean(false)
+var falseValue = false
+var res = falseObj && true
+res => true
+
+
+typeof fasleObj => 'object'
+typeof falseValue => 'boolean'
+```
+
+### Number类型
+
+Number类型也是重写了valueof方法，而对于toString()可以额外传入一个参数表示返回几进制的字符串形式
+
 
 
 # 面向对象的程序设计
