@@ -719,6 +719,20 @@ typeof falseValue => 'boolean'
 
 Number类型也是重写了valueof方法，而对于toString()可以额外传入一个参数表示返回几进制的字符串形式
 
+### Number类型
+
+Number类型也是重写了valueof方法，而对于toString()可以额外传入一个参数表示返回几进制的字符串形式
+
+* toFixed() 方法会按照指定的小数位返回数值的字符串表示
+
+```
+var num = 10
+num.toFixed(2)  => '10.00'
+```
+* toFixed() 会自动四舍五入，同时可以表示0-20个小数位数，当然根据浏览器的不同，实现也不同
+
+![sf](lixiaohuloveyangtong.com/static/-.png)
+
 
 
 # 面向对象的程序设计
