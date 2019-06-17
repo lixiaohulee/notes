@@ -733,6 +733,52 @@ num.toFixed(2)  => '10.00'
 
 ![sf](lixiaohuloveyangtong.com/static/-.png)
 
+### String类型
+
+* charAt() || charCodeAt() 传入字符串中字符的位置，然后返回这个字符或者字符的字符编码值
+
+* concat() 方法用于将一个或者多个字符串拼接起来，也就是说他可以接受一个或者多个参数， 
+
+* slice() 返回子字符串，第一个参数是起始位置，第二个参数结束位置(不包括)
+
+* substr() 返回子字符串，第一个参数是起始位置，第二个参数是截取长度(改方法废弃)
+
+* substring() 返回子字符串，第一个参数是起始位置，第二个参数是结束位置(不包括)
+
+* 当参数是负数的时候情况就是不一样了对于这三个方法，slice会将负数和长度相加，substr会将负的第一个参数加上长度，而将第二个参数视为0，substring则会将所有的参数都视为0 
+
+* ***注意： 上面的几个字符串方法都不会改变原来的字符串***
+
+* indexOf() || lastIndexOf(）这两个方法都是返回子字符串的位置，如果没有找到，则返回-1， 他们的区别在于一个是从字符串的开头开始搜索，一个是从末尾开始搜索，他们都接受第二个参数，表示从字符串的什么位置开始搜索，**这么看来，这两个方法可以反过来**
+
+* trim() 创建字符串的一个副本 也就是说不会改变原来的字符串，同时去掉字符串的开头和末尾的空格
+
+* toLowerCase() toUpperCase() toLocalLowerCase() toLocalUpperCae() 字符串的大小写转化，加上local是因为根据地区不同，少数语言会对为Unicode大小写转化应用特殊的规则
+
+* match() 模式匹配，接受的参数是一个正则表达式，或者Regexp对象，本质上与调用正则表达式的exec()方法一样，返回分组
+
+### 单体内置对象
+
+由ECMAScript定义并实现提供的，不依赖于宿主对象的，在程序执行之前就已经存在了的对象，例如： Object, Array, String, Global, Math
+
+* isNaN isFinite parseInt parseFloat 等都是在Global全局对象上的
+
+* encodeURI decodeURI 只会对整个URI编码，它不会对本身属于URI自身的特殊字符编码，如冒号，问好等，
+
+* encodeURIComponent decodeURIComponent 则会对所有的非标准字符编码
+
+* eval() 接受一个js代码字符串，并执行，eval中执行的代码具有与当前行共同的作用域，
+
+* Math对象
+
+* Math.ceil() 向上舍入
+
+* Math.floor() 向下舍入
+
+* Math.round() 四舍五入
+
+* Math.random() 返回一个0到1的随机数，不包括0和1
+
 
 
 # 面向对象的程序设计
