@@ -810,6 +810,30 @@ ECMA-262第五版在定义只有内部(供js引擎使用的)使用的特性时�
 	
 2. [[Enumerable]] 表示能否通过for in 循环返回属性 默认值就是true
 
+3. [[Writable]] 表示能否修改属性的值，默认值就是true
+
+4. [[Value]] 包含着整个属性的属性值，读取和写入属性值的时候都是在这个位置操作的 默认值时undefined
+
+```
+var person = {
+    name: 'lixiaohu'
+}
+
+person.name[[Value]] => lixiaohu
+```
+
+### Object.defineProperty()
+
+***要修改属性的特性 就必须使用Object.defineproperty()这个方法***
+
+* 这个方法的使用规则是： 接受三个参数，第一个参数是属性所在的对象，第二个参数是属性名称，第三个参数是一个描述符对象，这个对象的属性必须是configurable,enumable,writable,value这四个属性中一个或者多个
+
+
+* 调用这个方法如果把configurable设置为false，那么如果再次调用该方法设置除了writable之外的特性值时都会报错，
+
+* 注意如果调用了该方法时， 没有指定configurable, enumerable, writable,
+则他们默认都是false
+
 
 
 # 面向对象的程序设计
