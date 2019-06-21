@@ -834,6 +834,54 @@ person.name[[Value]] => lixiaohu
 * 注意如果调用了该方法时， 没有指定configurable, enumerable, writable,
 则他们默认都是false
 
+***注意：***
+
+> 在把writable特性设置成false后表示这个属性是只读的，如果这时尝试为这个属性赋值，非严格模式下赋值操作忽略，严格模式下会报错
+
+> 同样的如果把configurable特性设置成false后，这是如果再尝试改变这个属性的除了writable之外的任何特性值都会在严格模式下报错，非严格模式下忽略（测试后发现，**设置成false之后，value特性是可以改变的**）
+
+
+#### 访问器属性
+
+访问器属性不包含数据值，而是拥有一个[[Get]], [[Set]]， 这两个特性都应该对应的是两个函数，在为这个属性写入值的时候会调用Set函数处理，读取属性值的时候会调用Get函数返回值，这两个特性的默认值是undefined
+
+***如果想为一个对象设置一个访问器属性，就必须通过调用Object.defineProperty()这个方法来设置，这里这么说的原因在于，我们平时普通为为一个对象设置的属性默认都是数据属性***
+
+* 同样的访问器属性也有四个特性，
+
+1. [[Configurable]] 同数据属性的configurable特性相似，表示能否通过delete操作符删除属性，能否将属性变为数据属性，能否修改属性的特性，默认值是true
+
+2. [[Enumerable]] 表示能否通过for in 循环返回属性 默认值true
+
+3. [[Set]] 写入属性值的时候调用的函数  默认值undefined
+
+4. [[Get]] 读取属性值的时候调用的函数 默认值undefined
+
+```
+var book = {
+    _year: 2005,
+    edition: 1
+}
+
+//定义访问器属性
+Object.defineProperty(book, 'year', {
+    get: function() {
+        return this._year
+    },
+    
+    set: function(newValue) {
+        if (newValue > 2004) {
+            this._year = newValue
+            this.edition += newValue - 2004
+        }
+    }
+
+})
+```
+**不一定非要同时指定getter和setter 只指定getter意味着不能写，尝试写入非严格模式下忽略，严格模式下报错，同样，只指定setter意味着不能读，尝试读取非严格模式下返回undefined，严格模式下报错**
+
+***这里发现了一个书中的错误，关于上面的这段描述，其实说的是一种情况全是只只指定getter的情况***
+
 
 
 # 面向对象的程序设计
