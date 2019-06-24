@@ -884,6 +884,41 @@ Object.defineProperty(book, 'year', {
 
 
 
+### Object.defineProperties() 为对象定义多个属性
+
+这个方法接受两个对象参数，第一个参数表示要添加属性和修改属性的目标对象，第二个参数对象中的属性和第一个参数对象中要添加的属性一一对应
+
+```
+var book = {}
+
+Object.defineProperties(book, {
+    year: {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: 2003
+    },
+    _year: {
+        configurable: true,
+        enumerable: true,
+        get: function() {
+            return this.year
+        },
+        set: function(value) {
+            this.year += value
+        }
+    }
+})
+```
+**上面这段代码为book对象一次性添加了两个属性，一个数据属性，一个防卫器属性**
+
+
+### Object.getOwnPropertyDescriptor()
+
+这个方法可以获取一个属性的所有特性，接受两个参数，第一个参数是目标对象，第二个参数要查看特性的属性，返回值是一个对象，如果是一个数据属性，则是返回的对象中有Configurable, enumerable, writable, value四个属性，如果是一个访问器属性则是返回一个对象中的属性都有，Configurable, enumerable, get, set四个特性
+
+
+
 # 面向对象的程序设计
 ---
 ### *理解对象*
