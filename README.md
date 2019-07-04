@@ -918,6 +918,62 @@ Object.defineProperties(book, {
 这个方法可以获取一个属性的所有特性，接受两个参数，第一个参数是目标对象，第二个参数要查看特性的属性，返回值是一个对象，如果是一个数据属性，则是返回的对象中有Configurable, enumerable, writable, value四个属性，如果是一个访问器属性则是返回一个对象中的属性都有，Configurable, enumerable, get, set四个特性
 
 
+## 创建对象
+
+---
+
+> 虽然用Object构造函数或者对象字面量的方式可以创建单个对象，但是这种方式的一个明显区别是创建多个对象的时候会产生大量重复的代码，因此产生了一种叫做工厂模式的方式
+
+### 工厂模式
+
+工厂模式抽象了创建对对象的具体过程，有效减少了创建多个对象的时候产生大量重复的代码，但是它有个明显的缺点就是无法解决创建的对象的识别的问题***(即怎样知道一个对象的类型)***
+
+```
+function createPerson(name, age, job) {
+    var o = new Object()
+    
+    o.name = name
+    o.age = age
+    o.job = job
+    o.sayName = function() {
+        alert(this.name)
+    }
+    
+    return o
+}
+```
+
+### 构造函数模式
+
+ECMAscript中的函数可以用来创建特定的对象，像Object, Array这样的原生构造函数在运行时会自动出现在执行环境中，当然我们也可以创建自定义的函数来创建对象
+
+```
+function Person(name, age) {
+    this.name = name
+    this.age = age
+    this.sayName = function() {
+        alert(this.name)
+    }
+
+}
+
+var p1 = new Person('lixiaohu', 23)
+var p2 = new Person('xxx', 0)
+
+```
+
+> 注意： 构造函数创建对象不会再创建一个新对象，直接把属性赋值给函数的this对象，没有return语句
+
+使用构造函数的方式创建对象必须使用```new```操作符
+
+new操作符创建一个对象的实际过程分为四个步骤：
+
+1. 创建一个新对象，
+2. 将构造函数的作用域赋值给新对象，就是this指向了这个对象
+3. 执行构造函数中代码，为这个新对象添加属性，
+4. 返回新对象
+
+* 创建自定义的构造函数意味着将来可以将它的实例标识成一种特定的类型，这就是构造函数模式胜过工程模式的地方
 
 # 面向对象的程序设计
 ---
