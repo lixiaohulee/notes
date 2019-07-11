@@ -1,15 +1,26 @@
 
-Object.prototype.name = 1232
-var obj = {
 
+
+
+function Person() {
+    this.name = 'lee'
 }
 
-obj.name = 'asdasdfasd'
+Person.prototype = {
+    age: 22
+}
 
-obj.name = null
+Object.defineProperty(Person.prototype, 'constructor', {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: Person
+})
 
-// delete obj.name
+var p = new Person()
 
-console.log(obj.name)
 
-console.log(obj.hasOwnProperty('name'))
+for(var key in p) {
+    console.log(key)
+}
+

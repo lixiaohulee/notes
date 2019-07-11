@@ -1051,6 +1051,51 @@ console.log(obj.name)   => lee   恢复成功
 
 这个方法用于来判断一个属性到底是属于对象实例中的呢还是属于原型对象中的呢，如果是来自对象实例则返回true，否则返回false，**通过这个方法属性什么时候访问的是原型属性什么时候访问的是实例属性一目了然**
 
+#### in操作符 
+
+会在通过对象能访问到给定属性时返回true，无论该属性是在实例中还是在原型对象中
+
+> 同时结合hasOwnProperty 和 in 操作符就能判断出这个属性到底是属于原型对象还是实例对象中
+
+**注意： ```Object.getOwnPropertyDescriptor(targetObj, propertyName)```** 默认只会返回实例属性的描述符对象，如果想访问原型对象上的属性的描述符对象必须在对象的原型对象上调用这个方法
+
+
+#### for in 循环
+
+返回的是所有能通过对象访问的，可枚举的属性，这些属性既包括实例中的也包括原型对象中的。**注意： Object原型对象上的hasOwnProperty，propertyIsEnumerable, toLocaleString, toString, valueOf都是不可枚举的，ECMA5开始也将constructor，prototype设置成不可枚举的了**因此这些属性都不会出现在for in循环的结果中
+
+#### Object.keys() ECMA5开始
+
+要取得对象上所有的***可枚举的实例属性***可以用Object.keys()这个方法，
+
+### Object.getOwnPropetyNames() 
+
+获得所有的实例属性，无论是否可以枚举
+
+> Object.keys() 和 Object.getOwnPropertyNames()这两个方法都可以用来替代for in 循环
+
+#### 重写原型对象
+
+```
+function Person() {}
+
+Person.prototype = {
+    name: 'lee'
+}
+```
+这种以字面量的形式重写原型对象的形式非常的方便，但是他的缺点是这样会丢失construcor属性的指向正确性，像上面这样现在constructor属性其实是指向Object.prototype的，其实字面量对象中是没有这个construtor属性，但是别忘了，访问属性可以沿着原型链查找，他的原型对象有啊，**如果认为这个constructor属性的执行很重要，可以去手动改正设置**
+
+```
+function Person() {}
+
+Person.prototype = {
+    constructor: Person，
+    name: 'lee'
+}ß
+
+```
+**注意：constructor属性的[[Enumerable]]属性默认是false,上面刚说过，但是通过这样的方式重写的话，就会变为true，所以最安全的设置方法就是可以通过Object.defineProperty()去设置这个属性**
+
 # 面向对象的程序设计
 ---
 ### *理解对象*
