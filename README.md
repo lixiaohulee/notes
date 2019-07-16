@@ -1096,6 +1096,53 @@ Person.prototype = {
 ```
 **注意：constructor属性的[[Enumerable]]属性默认是false,上面刚说过，但是通过这样的方式重写的话，就会变为true，所以最安全的设置方法就是可以通过Object.defineProperty()去设置这个属性**
 
+#### 原型的动态性
+
+对原型对象中的任何修改都会立即反应在实例中，原因就是因为实例和原型之间的松散链接关系，实例与原型之间的连接是一个指针而不是一个副本，但是如果重写原型对象情况就会不同，因为这样会切断构造函数与最初的原型对象之间联系
+
+```
+function Person() {}
+
+var person = new Person()
+
+Person.prototype = {
+    constructor: Person,
+    sayName: function() {
+        alert(222)
+    }
+}
+person.sayName()     //error
+```
+
+#### 原生对象的原型
+
+原生对象上一些方法都是定义在他的原型对象上的，不过我们再建议在原生对象的原型上添加自定义方法或者属性，
+
+#### 原型模式的问题
+
+所有实例默认情况下都会取得相同的属性值，而且它的所有属性都是被很多实例所共享的，这种共享对于函数来说非常适合，对于那些包含基本值的属性也说的过去，但是对于包含引用类型的属性来说这就是灾难了，
+
+```
+function Person() {}
+
+Person.prototype = {
+    constructor: Person,
+    friends: ['lee', 'yang']
+}
+
+var p1 = new Person()
+var p2 = new Person()
+
+p1.friends.push('xiaodong')
+
+p1.friends => [lee, yang, xiaodong]
+p2.friends => [lee, yang, xiaodong]
+```
+
+***这样的冲突点在于实例一般是要有完全属于自己的属性的，原型模式是做不到这样的***
+
+### 组合使用构造函数模式和原型模式
+
 # 面向对象的程序设计
 ---
 ### *理解对象*
