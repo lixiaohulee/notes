@@ -1143,6 +1143,82 @@ p2.friends => [lee, yang, xiaodong]
 
 ### 组合使用构造函数模式和原型模式
 
+创建自定义类型的最常见模式就是组合使用构造函数模式和原型模式，构造函数模式用于定义实例属性，而原型模式用于定义方法和共享的的属性
+
+```
+function Person(name, age) {
+    this.name = name
+    this.age = age
+    this.friends = []
+}
+
+Person.prototype = {
+    constructor: Person,
+    sayName: function() {
+        alert(this.name)
+    }
+}
+```
+
+### 动态原型模式
+
+> 上面的那种组合使用构造函数和原型模式方法对于有其他oo语言的开发人员来说是非常奇怪的，而动态原型模式可以完美解决的他们的疑惑
+
+```
+function Person(name, age) {
+    this.name = name
+    this.age = age
+    
+    if (typeof this.sayName !== 'function') {
+        Person.prototype.sayName = function() {
+            alert(this.name)
+        }
+    }
+} 
+
+const p = new Person('lee', 23)
+```
+
+构造函数中的if语句块只会执行一次，之后不会再执行，因为原型对象中已经存在了sayName方法，而如果一旦在原型对象中添加了方法，会立即反应到各个实例中，包括之前创建的对象实例，**切记这里给原型对象添加方法的时候千万不要重写原型对象，之前提到过，一旦重写原型对象，之前创建的实例，他们都会丢失与原型对象的链接**
+
+### 寄生构造函数模式
+
+构造函数封装着创建对象的代码
+
+```
+function Person(name, age) {
+    const o = new Object()
+    o.name = name
+    o.age = age
+    
+    o.sayName = function() {
+        alert(this.name)
+    }
+    
+    return o
+}
+
+const p = new Person('lee', 232)
+```
+如果不使用new关键字实例化对象，其实寄生构造函数模式和工厂模式没有什么区别
+之所以还能这么用的原因在于**构造在不返回任何值的时候默认返回新创建的对象实例，而我们可以通过添加return语句来重写返回的值，这才是关键所在**
+
+
+### 稳妥构造函数模式
+
+> 新创建的对象实例的不引用this对象，不使用new操作符调用构造函数
+
+```
+function Person(name, age) {
+    const o = new Object()
+    o.sayName = function() {
+        alert(name)
+    }
+    
+    return o
+}
+```
+
 # 面向对象的程序设计
 ---
 ### *理解对象*
