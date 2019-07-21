@@ -1219,6 +1219,40 @@ function Person(name, age) {
 }
 ```
 
+### 继承
+
+继承的实现主要是依赖于原型链的机制，假如我们让原型对象等于另一个类型的实例就可以实现继承，***实现继承的本质就是重写原型对象*** 
+
+```
+function Father(name) {
+    this.name = name
+}
+Father.prototype.sayName = function() {
+    alert(this.name)
+}
+
+function Son(name, age) {
+    this.age = age
+    this.name = name
+}
+
+Son.prototype = new Father('a')
+
+const s = new Son('b', 343)
+```
+
+#### 理解继承
+
+> 首先我们重写了Son类型的原型对象，Son类型的原型对象现在就是Father类型的一个实例化对象，那么我们如果实现继承的呢，别忘了访问对象的属性或者方法的机制过程，如果访问一个对象的属性或者访问首先在这个对象的本身去查找，如果没有找到就会沿着原型链去原型对象中查找，访问sayName访问首先在Son类型的实例中是没有的，所以到Son类型的原型对象中查找，Son类型的原型是Father类型的一个实例，这个实例中也是没有sayName方法的，所以接着根据这个实例的内部指针[[\__proto__]] 找到Father的原型对象，而Father的原型对象中是有这个sayName方法的 至此找到了这个方法，成功实现了继承
+
+
+#### 别忘记了默认的原型
+
+**我们前面所展示的原型链还少一环，要知道所有引用类型默认都继承了Object，而这个继承也是通过原型链实现的，要记住：所有函数的默认原型对象都是Object的实例，因此默认原型对象中包含一个内部指针属性就是那个[[__proto__]]它指向的就是Object.prototype这个对象，这也正是自定义类型的都会继承toString等方法的根本原因**
+
+
+> Object.prototype.[[\__proto__]] === null Object.prototype是原型链的顶端，Function，Object等其他构造函数都是继承Fucntion.prototype而产生
+
 # 面向对象的程序设计
 ---
 ### *理解对象*
