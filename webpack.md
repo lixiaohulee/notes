@@ -58,3 +58,74 @@
 * Dlls
 
 * 减小chunk的大小，分割代码，删除无用的代码
+
+### 代码分割
+
+webpack有三种方式可以实现代码分割
+
+1. entry 入口处手动物理分割
+
+2. splitChunksPlugin
+
+3. 动态引入，import
+
+> 对于入口
+
+chunkFilename用来标示非入口文件的名称
+
+#### splitChunksPlugin
+
+**默认情况下 分割插件只会影响按需加载的块**
+
+```
+module.export = {
+    optimization: {
+        splitChunks: {
+            chunks: 'async',
+            minSize: 30000,
+            maxSize: 0,
+            minChunks: 1,
+            maxAsyncRequests: 5,
+            maxInitialRequests: 3,
+            automaticNameDelimiter: '~',
+            automaticNameMaxLength: 30,
+            name: true,
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10
+                },
+                defalut: {
+                    minChunks: 2,
+                    priority: -20,
+                    reuseExistingChunk: true
+                }
+            }
+        }
+    }
+}
+```
+> webpack的代码分割默认的配置已经是很好的优化设计了，但不排除你的项目需要改变配置而达到更好的优化体验
+
+**automaticNameDelimiter** 生成的chunk名称的分隔符号 默认是‘～’
+
+**automaticNameMaxLength** 生成的名字字数最大值
+
+**chunks** 表示哪样的chunk可以用来被优化 它的值可以是函数或者字符串，如果是字符串接受all async initial all表示任何类型的模块提供函数可以做到更加灵活的优化模块选择
+
+```
+chunks(chunk) {
+    return chunk.name !== 'my-excluded-chunk'
+}
+```
+**maxAsyncRequests** 按需加载的时候的最大并行请求数量 
+
+**maxInitialRequests** 入口文件的最大的并行请求数量
+
+**minChunks** 分割前必须共享的最小块数
+
+**minSize** 要生成的块的最小大小，字节单位
+
+**maxSize** 无论是optimization.splitChunks.maxSize 还是optimization.splitChunks.cacheGroups[x].maxSize 还是optimization.splitChunks.fallbackCacheGroup.maxSize都是在告诉webpack将比maxSize更大的模块尝试分割更小的块
+
+> maxInitialRe
