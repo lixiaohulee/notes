@@ -128,4 +128,32 @@ chunks(chunk) {
 
 **maxSize** 无论是optimization.splitChunks.maxSize 还是optimization.splitChunks.cacheGroups[x].maxSize 还是optimization.splitChunks.fallbackCacheGroup.maxSize都是在告诉webpack将比maxSize更大的模块尝试分割更小的块
 
-> maxInitialRe
+**maxInitialRequests** 入口文件的最大的并行请求数量
+
+**minChunks** 分割前必须共享的最小块数
+
+**minSize** 要生成的块的最小大小，字节单位
+
+**maxSize** 无论是optimization.splitChunks.maxSize 还是optimization.splitChunks.cacheGroups[x].maxSize 还是optimization.splitChunks.fallbackCacheGroup.maxSize都是在告诉webpack将
+
+**name** 表示生成的chunk的名称，可以接受true或者函数或者string，接收true表示根据模块的名称自动生成名字，当然这里的name属性也可以被cacheGroups中模块分组中的name属性所覆盖，***注意，指定name属性为字符串或者为一个函数切函数始终返回相同的值会导致webpack将所有的模块合并成一个模块 这是不可取的***
+
+> 通常建议在生产环境下name属性设置为fasle，以防止不必要的将名称改变
+
+
+#### cacheGroups
+
+	cacheGroups可以继承或者重写splitChunks的选项除了test，
+	priority，reuseExistingChunk
+	
+**如果不想启用任何缓存组中的默认设置，可以通过将default选项设置为false达到这个目的**
+
+**priority** 一个模块有可能同时属于多个缓存组，而优化则会选择具有更高的优先级的缓存组，默认的缓存组的优先级是负数，允许自定义缓存组拥有更高的优先级，自定义缓存组的优先级是0
+
+**reuseExistingChunk** 如果当前模块包含一个已经在前面主模块拆分出来的模块，那么将不会再重新生成一个模块二是使用已经存在的模块
+
+**test**给cacheGroup控制模块，如果忽略这个属性将会选择所有的模块，他可以接受一个函数或者正则或者字符串
+
+**filename** 允许去重写filename属性当且仅当是initial块的时候
+
+**enforce** 告诉webpack忽略掉minSize minChunks, maxAsyncRequests, maxInitalRequests总是为缓存组创建块
