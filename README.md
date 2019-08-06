@@ -1327,3 +1327,133 @@ s.colors => [1,2,3,4,5,6]
 
 > 我认为这就不算是继承
 
+### 组合继承
+
+```
+function SuperType(name) {
+    this.name = name
+    this.colors = [1,3,43,54]
+}
+SuperType.prototype.sayName = function() {
+    alert(this.name)
+}
+
+function SubType(name, age) {
+    SuperType.call(this, name)
+    this.age = age
+}
+
+SubType.prototype = new SuperType()
+
+SubType.prototype.sayAge = function() {
+    alert(this.age)
+}
+
+const s1 = new SubType('lee', 22)
+s1.colors.push(1111)
+s1.colors. => [1,3,43, 54, 1111]
+s1.sayName() => lee
+s1.sayAge() => 22
+
+const s2 = new SubType('yang', 11)
+s2.colors => [1,3,43,54]
+s2.sayName() => yang
+s2.sayAge() => 11 
+
+```
+> 组合继承其实就是结合了原型继承和借用构造函数继承的有点，既能保证私有属性又能同时共享原型方法和属性
+
+### 原型继承
+
+> 原型继承是由道格拉斯提出的一种借助原型基于已有的对象创建新对象的继承方式
+
+```
+function object(o) {
+    function Func() {}
+    Func.prototype = o
+    return new Func()   
+}
+```
+**上面的代码就是原型继承的代码, 原型继承的使用是需要基于一个对象作为另一个对象的基础，然后如果再有自己的需求就可以在新的对象中作出修改和添加, 但是要注意基础对象因为要作为原型对象成为新对象的原型，所以基础对象中的引用类型将会不仅仅属于基础对象，同时还会被新对象所共享，其实这里要注意原型继承其实根本没有用到构造函数的概念**
+
+```
+const person = {
+    name: 'lee',
+    colors: [1,2,3]
+}
+
+function object(o){
+    function Func(){}
+    Func.prototype = o
+    return new Func()
+}
+
+const o1 = object(person)
+o1.name = 'lixiaohu'
+o1.colors.push(4)
+
+const o2 = object(person)
+o2.name = 'yangtong'
+o2.colors.push(5)
+
+person.colors => [1,2,3,4,5]
+```
+
+> ECMAscript5通过新增Object.create()规范了原型继承，这个方法的实现大概就是上面的代码的object函数，它接受两个参数，一个是base对象，就是那个要被当作原型对象的对象，一个是想要新增加的对象的属性，它的格式和Object.defineProperties()的参数一样
+
+```
+const person = {
+    name: 'lee'
+}
+
+const newPerson = Object.create(person, {
+    age: {
+        configurable: true,
+        writable: true,
+        enumerable: true
+        value: 212
+    }
+})
+```
+
+### 寄生式继承
+
+> 寄生式继承与寄生构造函数和工厂模式相似，即创建一个仅用于封装继承过程的函数，该函数在内部以某种方式来增强对象，最后再像真的似的返回对象
+
+```
+function createAnother(original) {
+    const clone = object(original)   //通过调用函数创建一个新对象
+    clone.sayHi = function() {
+        alert('hi')
+    }
+    return clone 
+}
+```
+**这里的object方法我觉得跟Object.create()的实现差不多吧 在这里其实任何能够返回一个对象的方法都可以是object方法**
+
+使用寄生式继承来为新对象添加的函数，由于它是直接添加到对象实例的，所以这样的函数不能像添加到原型对象中那样做到函数复用从而降低效率
+
+### 寄生组合式继承
+
+```
+function SuperType(name) {
+    this.name = name
+    this.colors = [1,2,3]
+}
+
+SuperType.prototype.sayName = function() {
+    alert(this.name)
+}
+
+function SubType(name, age) {
+    Supertype.call(this, name)
+    this.age = age
+}
+
+SubType.prototype = new SuperType()
+SubType.prototype.constructor = SubType
+SubType.prototype.sayAge = function() {
+    alert(this.age)
+}
+```
+
