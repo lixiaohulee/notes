@@ -1690,3 +1690,81 @@ console.log(o.publicMethod())
 时重复定义公有方法， 但是还要注意这里有一个问题，就是在没有使用变量声明关键字
 去定义一个全局变量的时候，在严格模式下这样的方式会报错
 ```
+
+### 单例模式
+
+所谓单例模式是指只有一个实例的对象
+
+```
+var singleton = function() {
+    var privateVariable = 10
+    function privateFunction() {
+        return false
+    }
+    
+    return {
+        publicProperty: true,
+        publicFunction() {
+            privateVariable++
+            return privateFunction()
+        }
+    }
+}
+```
+
+> 按照惯例，通常在js中是按照对象字面量的方式创建单例对象的
+
+
+# BOM
+
+浏览器对象模型
+
+BOM的核心是window对象，表示浏览器的一个实例，同时它还扮演着JavaScript中的global对象的角色，因此所有在全局作用域中声明的变量和函数都会变成window对象的属性和方法
+
+> 但是要记住定义在全局作用域中的属性和方法和直接在window对象上定义的属性和方法**还是有一定区别的**，区别就是：全局变量不能delete操作符删除而window对象上定义的属性和方法是可以删除的
+
+**全局变量和方法不能删除的本质区别其实第六章讲到的对象属性的特性在搞的鬼，还记得吗，属性有个特性叫做[[Configurable]] 全局属性的的这个特性被默认设置成了false所以delete操作符没有用**
+
+可以通过Object.getOwnPropertyDescriptor(target, propertyName)获取对象属性的特性描述符
+
+```
+
+var age = 13
+
+window.color = 222
+
+delete window.age //error
+
+delete window.color   // true
+
+
+```
+
+### 框架集
+
+在含有框架集中的页面中，每个框架集都有自己的window对象，也就是说拥有多个global对象，每个框架都有一套自己的完整的构造函数，**同时各个框架集之间的构造函数都不相等，比如说frames[0].Object 不等于 frames[1].Object 这样的话会影响到跨框架之间的传递的对象使用instanceof操作符的判断能力，这在之前的提到过，instanceof这个操作符有一定的问题的，就在这里**
+
+### 窗口位置
+
+**由于浏览器厂商实现的获取浏览器窗口位置的api的不同，所以在跨浏览器取得窗口位置精确的值是一个比较的困难的事情**
+
+> 由于各大浏览器厂商实现的api不同(包括api名称，API的表现都不同) 比如说获取浏览器窗口相对于屏幕上面的位置，在IE，safari，Opera，Chrome中都提供了screenTop，但在Firefox中提供了 screenY等  并且他们对相对于屏幕上面的位置的理解也不同IE,Chrome,Opera都认为是屏幕上面到页面可见区域的位置，而Firefox safari则认为是整个窗口到屏幕的位置
+
+```
+function windowPosition() {
+    const leftPos = typeof window.screenLeft === 'number'
+                        ?  window.screenLeft
+                        :  window.screenX
+
+    const topPos = typeof window.screenTop === 'number'
+                        ? window.screenTop
+                        : window.screenY
+                    
+    return {
+        leftPos,
+        topPos
+    }
+} 
+
+console.log(windowPosition())
+```
