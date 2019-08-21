@@ -1768,3 +1768,42 @@ function windowPosition() {
 
 console.log(windowPosition())
 ```
+
+获取浏览器窗口位置可能是一件不能精确的事情，但是我们可以通过moveTo & moveBy两个方法将窗口移动到精确的位置
+
+* moveTo(newPosX, newPosY)
+
+* moveBy(x轴移动距离，y轴移动距离)
+
+**需要注意的是这俩个方法都可能被浏览器所禁用，同时他们都不适用于框架**
+
+> 试了一下 这俩方法再chrom中没有什么卵用 都不生效， 查了下说会在ie中生效
+
+
+### 窗口大小
+
+**窗口大小和视口大小不是一回事**
+
+同样的问题在获取浏览器窗口大小的问题上，一样是不容易的，由于各大浏览器厂商对api实现的表现的理解不同，实际获得效果也是有所不同的
+
+获取浏览器窗口大小的api是： outerWidth outerHeight innerHeight innerWidth 
+
+在IE9+，safari，firefox中outerWidth & outHeight 返回的是浏览器窗口本身的大小，**就是包括浏览器窗口的边框** 在Opera这俩个属性表示视图容器的大小，而innerWidth & innerHeight返回页面视图区域的大小(视口大小)，chrome中这个四个属性对应返回相同的值都是视口的大小
+
+### 视口大小
+
+在标准模式和混杂模式下获取视口大小的api有所不同
+
+```
+let pageWidth = window.innerWidth
+let pageHeight = window.innerHeight
+
+if (typeof pageWidth !== 'number') {
+    if (document.compatMode === 'CSS1Compat') {
+        pageWidth = document.documentElement.clientWidth
+        pageHeight = document.documentElement.clientHeight
+    }else {
+        pageWidth = document.body.clientWidth
+        pageHeight = document.body.clientHeight
+    }
+}
