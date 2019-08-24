@@ -1807,3 +1807,109 @@ if (typeof pageWidth !== 'number') {
         pageHeight = document.body.clientHeight
     }
 }
+
+### 调整浏览器窗口的大小
+
+* resizeTo(新宽度，新高度)
+
+* resizeBy(宽度之差， 高度之差) 
+
+> 可惜的是，这俩个api依旧在chrome中不能生效，被禁止掉了
+
+**有说就算没有禁止掉，也只有在通过```window.open```打开的页面，同时只有一个tab标签页面的时候才能生效**
+
+### 注意了：曾过实际的验证，上面所说的改变浏览器窗口大小和移动浏览器位置的api确实在浏览器中默认有些是禁用的，但是但是如果通过```window.open()```这个方法打开同时在设置了这个方法的第三个字符串参数的中的resizable特性为true，同时在window.open()方法调用之后返回的新的浏览器窗口的引用，在这个应用下就可以调用位置和大小方法了，亲测有效
+
+```
+const newWindow = window.open('http://www.baidu.com', 
+'_blank', 'width=400,height=400,left=100,top=100,resizable=yes')
+
+newWindow.moveBy(100, 100)  //有效
+newWindow.moveTo(100, 100)  //有效
+
+newWindow.resizeBy(100, 100) //有效
+newWindow.resizeTo(100, 100) //有效
+
+```
+**震撼吗**
+
+### window.open
+
+这个方法接受四个参数，要加载Url，窗口目标，一个特性字符串，一个表示新页面是否取代浏览器历史记录中当前加载页面的的布尔值
+
+第二个参数可以是已有窗口或者框架的名称或者是_self,_parent,_top,_blank特殊窗口名称
+
+第三个参数是一些特性字符串，用逗号隔开，表示新窗口中都表示哪些特性，例如：fullscreen, height, left, location, resizable,toolbar, top, width, menubar,
+
+> 这个方法返回一个新窗口的引用，可以在这个引用的基础上调用上面哪些被浏览器所禁用的方法，
+
+**鉴于浏览器的安全限制，window.open方法弹出的窗口可能会被屏蔽**
+
+```
+let blocked = false
+
+try {
+    let newWindow = window.open('http://www.baidu.com', '_blank')
+    if (newWindow == null) {
+        blocked = true
+    }
+}catch(error) {
+    blocked = true
+}
+
+if (blocked) {
+    alert('the popup was blocked')
+}
+```
+上面这段程序可以检测弹出窗口是否被屏蔽了
+
+### 超时调用和间歇调用 setTimeout & setInterval
+
+**超时调用都是在全局环境中调用的，因次函数中的this都是指向window的**
+
+超时调用和间歇调用的第一个参数都是在一个包含js代码的字符串或者一个函数，第二个参数表示多了多长时间将任务添加到任务队列中，如果任务队列为空就会立即执行，如果没有为空就会等待前面的代码执行完了之后执行
+
+这俩个方法都会返回一个定时器的引用，唯一的Id值，可以调用clearTimeout去清除掉超时调用只要指定的时间之前调用就可以达到效果
+
+
+setInterval方法可以间隔指定的时间去调用方法，**不推荐使用间歇调用，原因在于后一个间歇调用可能会在前一个间歇调用结束之前启动，并切间歇调用需要跟踪id，所以推荐使用超时调用去模拟间歇调用是一种比较好的实践方式**
+
+### 用户对话框 alert confirm prompt 
+
+弹出系统对话框是同步的，会阻塞代码执行
+
+
+### location对象 最有用的BoM对象之一
+
+|属性名称|例子|说明|
+|---|---|---|
+| hash | "#contents" | 返回url中#号后面的零或者多个字符，如果url不包含散列则会返回空字符串|
+| host | www.baidu.com:80 | 返回服务器名称和端口号 如果有 |
+| hostname | www.baidu.com | 返回不带端口号的服务器名称 |
+| href | http://www.baidu.com | 返回加载页面的完整url location对象的tostring() 方法也返回这个值|
+| pathname | /myhome/ |  返回目录或者文件名称 | 
+| port | 8080 | 返回url中指定的端口号 | 
+| protocol | https | 返回页面使用的协议 |
+| search | ‘?question=answer’ | 返回url中的查询字符串 | 
+
+```
+//获取并处理查询参数
+
+function getQueryStingArgs() {
+    const qs = window.location.search.length > 0 
+                  ? window.location.search.substring(1)
+                  : ''
+    const paramArr = qs.length > 0 ? qs.split('&') : []
+    const paramObj = Object.create(null)
+    
+    for(let i = 0; i <= paramArr.length - 1; i++) {
+        const currentParam = paramArr[i].split('=')
+        const key = currentParam[0]
+        const value = currentParam[1]
+        
+        paramObj[key] = value
+    }
+    
+    return paramObj
+}
+```
