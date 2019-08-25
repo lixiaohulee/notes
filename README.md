@@ -1913,3 +1913,68 @@ function getQueryStingArgs() {
     return paramObj
 }
 ```
+
+### 位置操作
+
+通过location对象就可以改变浏览器的位置，最常用的方法就是```location.assgin()``` 他的作用和window.location=   location.href= 的作用是一样的
+
+> 通过修改location的属性: search hostname pathname port除了hash外页面都会重新加载 通过这几种方式都会在浏览器历史记录中新生成一条记录，因此通过单击后退按钮就会导航到前一个页面
+
+**要想禁止掉上面这样的新生成页面的问题可以使用replace方法，这个方法接受一个参数，就是导航到的URL，他可以使浏览器位置变化，但是不会在历史记录总生成新的记录**
+
+```window.location.reload``` 这个方法如果掉用的时候没有传递参数，会以最有效的方式也就是会在浏览器缓存中加载的方式去重新加载页面，但是如果传递了true就会从服务器中重新加载页面
+
+### navigator 对象
+
+navigator对象包含了客户端的信息，其中有userAgent浏览器的用户代理字符串等
+
+### 检测插件
+
+通过navigator对象的plugins属性，这是一个数组，里面包含所有插件的信息
+
+```
+functiton hasPlugin(name) {
+    name = name.toLowerCase()
+    
+    for(var i = 0; i <= navigator.plugins.length - 1; i++) {
+        const plugin = navigator.plugins[i].name
+        if (name === plugin) {
+            return true
+        }
+    }
+    
+    return false
+}
+```
+
+> 检测IE中的插件有所不同，IE中就得使用专门的ActiveObject类型
+
+```
+function hasPlugin(name) {
+    try {
+        new ActiveObject(name)
+        return true
+    }catch(error) {
+        return false
+    }
+}
+```
+
+**注意：这里使用try catch语句的原因在于实例化未知的对象会报错，所以就是说如果在实例化时发现实例化成功了那么这个插件相当于是存在的，如果没有实例化成功说明这个插件是不存在的就这么简单**
+
+
+### 注册处理程序
+
+### screen对象
+
+**JavaScript中有几个对象在编程中用处不大，screen对象就是其中之一，screen对象基本上只是用来表示客户端的能力， 包括浏览器窗口的外部的信息，像素宽度和高度，每个浏览器的screen对象都包含着不同的属性**
+
+### history对象
+
+history对象中包含中的浏览器浏览器历史记录，
+
+history.go() 可以随意在历史记录中穿梭，可以接受一个正负数字值也可以接受一个字符串，会跳转到最近的相关字符串页面
+
+history.back() 后退一页面
+
+histor.forward() 前进一页面
