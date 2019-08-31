@@ -1978,3 +1978,70 @@ history.go() 可以随意在历史记录中穿梭，可以接受一个正负数�
 history.back() 后退一页面
 
 histor.forward() 前进一页面
+
+# 客户端检测
+
+---
+
+### 能力检测
+
+能力检测又称为特性检测，能力检测的目的不是识别特定的浏览器，而是识别特别的能力
+
+能力检测要注意：
+
+1. 优先简则达成目的的最常用的特性，这样可以保证代码最优化，
+
+2. 必须检测实际要用到的特性，一个特性存在不一定代表另一个特性也存在
+
+```
+
+function getElement(id) {
+    if (document.getElementById) {
+        return document.getElementById(id)
+    }else {
+        return document.all(id)
+    }
+} 
+```
+
+### 怪癖检测
+
+bug检测
+
+
+# DOM 文档对象模型
+
+JavaScript中的所有节点类型都是继承自Node类型的，因此所有节点都共享着相同的基本属性和方法，每个节点都有个nodeType属性，用来表明节点的类型
+
+> 节点类型共有12个常量来表示，任何节点类型必居其一
+
+由于IE浏览器没用公开Node类型的构造函数，所以直接比较```someNode.nodeType === Node.ELEMENT_NODE```会导致错误，保险的方式就是直接用nodeType和数字比较，每一个节点类型都对应一个数字，元素节点的类型就是1比如
+
+nodeName & nodeValue nodeName保存的是节点的名称，nodeValue始终为null
+
+
+### 节点关系
+
+节点之间的关系可以理解家谱之间的关系，比如说可以把body元素看成是html的子元素，head元素可以看成是body元素的同胞元素等。
+
+> 每个节点都有一个childNodes属性，其中保存着一个NodeList类数组对象，可以像访问数组一样访问这个类数组对象，这个对象也有length属性，**注意了，这个NodeList对象有个很大的不同是它是基于DOM结构动态查询的结果，也就是说dom解构的变化会实时的反应到这个NodeList对象上，它是一个有生命的对象，并不是我们第一次访问它们时的一个快照**
+
+#### parentNode
+
+该属性指向文档中的父节点，在包含childNodes中的所有的节点中，每一个节点都指向同一个父节点
+
+#### previousSibling & nextSibling
+
+previousSibling属性和nextSibling属性分别指向节点的前一个同胞节点和后一个同胞节点，如果没有前一个或者后一个则为null
+
+#### firstChild & lastChild
+
+父节点的最后一个子节点和第一个子节点可以通过上面的两个属性可以访问，当然如果只有一个子节点的时候，两个属性相等，如果没有子节点那么这俩个属性都是null
+
+#### hasChildNodes() 
+
+这个方法可以用来判断在节点包含一个或者多个子节点的情况下返回true，应该说它是比查询ChildNodes的length属性更加有用的属性
+
+#### ownerDocument
+
+这个属性指向整个文档的文档节点也就是html元素，每一个元素都只能在一个文档中，所以通过这个属性可以直接访问到文档元素而不是一层一层向上查询
