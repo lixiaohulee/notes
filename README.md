@@ -2045,3 +2045,106 @@ previousSibling属性和nextSibling属性分别指向节点的前一个同胞节
 #### ownerDocument
 
 这个属性指向整个文档的文档节点也就是html元素，每一个元素都只能在一个文档中，所以通过这个属性可以直接访问到文档元素而不是一层一层向上查询
+
+### 操作节点
+
+#### appendChild() 向childNodes末尾添加节点
+
+appendChild用于向***childNodes列表的末尾***添加一个节点，并同时返回添加的节点，**如果添加的节点已经是文档的一部分了，那么就会从原来的位置移动到新位置**
+
+```
+const newNode = someNode.appendChild(newNode)
+someNode.lastChild = newNode
+```
+
+appendChild在向ChildNodes列表末尾添加元素后，dom中相关的所有api都会更新，他们都是动态的，比如说添加后，lastChild，firstChild，childNodes等等
+
+```
+const returnNode = someNode.appendChild(newNode)
+returnNode === someNode.firstChild   //false
+returnNode === someNode.lastChild   // true
+```
+
+
+#### insertBefore(要插入的节点，参考节点) 用与向某个特定的位置添加节点
+
+* 方法返回插入的节点
+
+* 如果参考节点是null 那么这个方法的效果等同于appendChild
+
+```
+const returnNode = someNode.insertBefore(newNode, null)
+returnNode === someNode.lastChild   // true
+returnNode === newNode. // true
+``` 
+
+```
+const returnNode = someNode.insertBefore(newNode, someNode.firstNode)
+
+returnNode === newNode // true
+returnNode === someNode.firstChild. // true
+```
+
+#### replaceChild(要插入的节点，要替换的节点) 返回替换的节点
+
+```
+const returnNode = someNode.replaceChild(newNode, someNode.firstNode)
+
+returnNode === someNode.firstNode  //false
+```
+
+#### removeChild(要移除的节点) 返回移除的节点
+
+```
+someNode.removeChild(someNode.lastChild)
+```
+
+**注意了，上面介绍的几个方法都有使用限制，那就是要想使用他们就必须先取得父节点，只有在父节点上调用这些方法才可以使用他们**
+
+### 两个不需要父亲节点就可以使用的方法
+
+#### cloneNode(boolean) true表示深复制就是会复制节点及其子节点, false表是浅复制仅仅复制节点本身
+
+```
+<ul>
+    <li></li>
+    <li></li>
+    <li></li>
+</ul>
+
+const ulNode = document.getElementsByTagName('ul')[0]
+const cloned1 = ulNode.cloneNode(true)
+
+cloned.childNodes.length === 3
+
+const cloned2 = ulNode.cloneNode(false)
+
+cloned2.childNodes.length === 0
+
+```
+
+> 注意了： cloneNode这个方法不会复制添加到dom中的JavaScript特性，比如说事件处理程序
+
+### normalize() 处理文本节点
+
+* 如果连续出现两个文本节点就会合并成一个
+* 如果出现一个空的文本节点那么就会删除这个文本节点
+
+
+### Document类型
+
+document类型表示文档，它是window对象的一个属性 表示整个页面
+
+#### 文档的子节点
+
+1. document.documentElement 表示html元素
+
+2. document.body 表示body元素
+
+3. document.doctype 表示<!DOCTYPE>引用
+
+4. document.firstChild
+
+5. document.childNodes
+
+**注意了：浏览器对document.doctype支持不一样**
