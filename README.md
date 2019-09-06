@@ -2148,3 +2148,47 @@ document类型表示文档，它是window对象的一个属性 表示整个页�
 5. document.childNodes
 
 **注意了：浏览器对document.doctype支持不一样**
+
+### 文档信息
+
+1. document.title 获取文档标题
+
+2. document.URL 获取页面的完整的URL
+
+3. document.domain 获取页面的域名 也可设置这个属性
+
+> document.domain的设置可以达到跨域的作用 当页面中包含其他子域的框架的时候，由于安全限制，不同的子域的页面无法通过JavaScript通信，而通过设置document.domain为相同的值，就可以通信了
+
+**另外要注意： 如果域名一开始是松散的，不能再设置为紧绷的，**
+
+```
+document.domain = 'wrox.com'   //松散
+
+document.domain = 'p2p.wrox.com'  //紧绷
+```
+
+### 查找元素
+
+#### document.getElementById()
+
+获取第一个出现的id属性配置的元素，如果没有找到则返回null，避免使用表单元素的name属性和id属性一样，不然会在IE浏览器中返回表单元素如果表单元素在前的话
+
+#### document.getElementsByTagName() 
+
+传入标签名称，返回一个HtmlCollection对象，这个对象与NodeList非常类似，但他还有nameItem方法可以传入标签的name属性值，传入*可以获取所有的标签
+
+> HtmlCollection 对象和 NodeList对象还是有区别的 虽然都是类数组对象，要注意有些获取元素的方法返回的是HtmlCollection 有些返回的是NodeList
+
+#### 特殊集合
+
+document.anchors 返回带name属性的a标签元素
+
+document.applets 返回所有的applets元素
+
+document.forms 返回所有的form表单元素
+
+document.images 返回所有的img元素
+
+document.links 返回所有的带href属性的a标签元素
+
+> 注意： 以上这些属性返回的都是HtmlCollection对象
