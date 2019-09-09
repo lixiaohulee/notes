@@ -2192,3 +2192,80 @@ document.images 返回所有的img元素
 document.links 返回所有的带href属性的a标签元素
 
 > 注意： 以上这些属性返回的都是HtmlCollection对象
+
+### 文档写入
+
+document.write && document.writeIn
+
+这俩个方法都可以在页面加载的时候动态的加入内容，其中可以动态加入外部资源，比如JavaScript文件等，
+
+> 如果在文档加载完毕后再去执行document.write方法写入内容，这样会重写整个页面
+
+```
+<html>
+    <head>
+        <title>hello world</title>
+    </head>
+    <body>
+        <script>
+            window.onload = function() {
+                document.write('hello world')
+            }
+        </script>
+    </body>
+</html>
+```
+
+### Element 类型
+
+Element类型的特点是：
+
+1. nodeType的值为1
+2. nodeName的值为元素的标签名称
+3. nodeValue的值为null
+4. parentNode的值可能是Document或者是Element
+5. 其子节点可能是Element,Text,Comment,等
+
+> 要访问元素的标签名称的话可以使用tagName或者nodeName属性，他们俩返回相同的值，但是要注意的是**在Htmlz中返回的都是大写标签名称，但是在XML中返回的标签名称和在代码中的一样，因此判断标签名称使用为了统一应该考虑全部转为大写或者小写**
+
+```
+if (element.tagName === 'div') {}  //这样容易出错
+
+if (element.tagName.toLowerCase === 'div') // 这样比较安全 适用于任何类型的文档
+```
+
+### html元素
+
+我们为每个html元素添加了特定的属性，ID，title，lang，dir，className
+除了id和lang对其他特性的修改都会立即表现到元素中，
+
+### 操作特性
+
+#### Element.getAttribute(特性名称)
+
+传递给我改方法的特性名称要于实际的特性名称一致，如果不存在则返回null，当然也可以用来取得自定义的特性名称，**但是要注意自定义特性名称是不区分大小写的**
+
+> 注意了： 有两类属性通过getAttribute和属性访问的方式，返回的值不一样，一个是style，前者返回css文本后者返回对象，一个是onclick前者返回相应代码的字符串，后者返回函数
+
+```
+ console.log(document.getElementsByTagName('div')[0].className)
+ 
+ console.log(document.getElementsByTagName('div')[0].style)
+        
+ console.log(document.getElementsByTagName('div'[0].getAttribute('style'))
+ 
+console.log(document.getElementsByTagName('div')[0].getAttribute('onclick'))
+        
+console.log(document.getElementsByTagName('div')[0].onclick)
+
+
+
+test
+ {0: "width", 1: "height", backgroundColor: }
+width: 100px; height: 100px; background-color: yellow;
+console.log(33)
+ƒ onclick(event) {
+console.log(33)
+}
+        
+```
