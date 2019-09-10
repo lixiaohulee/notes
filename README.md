@@ -2269,3 +2269,69 @@ console.log(33)
 }
         
 ```
+
+#### Element.setAttribute(属性名称，属性值)
+
+* 如果设置的属性已经存在则替换已有的属性，如果不存在则添加属性
+
+* 设置的属性名称一律会转化为小写
+
+> 因为所有特性都是元素的属性所以可以通过对象属性赋值的方式添加，但是自定义属性不行
+
+#### Element.removeAttribute()彻底删除元素的特性
+
+
+### attributes 属性
+
+* Element是唯一一个使用attributes属性的DOM节点类型
+
+* attributes属性是返回一个NameNodeMap集合类型，这个类型和NodeList相似，也是动态的
+
+* 主要的方法有，getNameItem(), removeNameIte(),setNamedItem,item()
+**记住：这几个方法都是返回或者删除的属性节点**
+
+
+```
+<div class="username" dir="ltr" title="hello"></div>
+
+const div = document.getElementsByTagName('div')[0]
+div.attributes.getNamedItem('class').nodeValue // username
+```
+> 注意使用的setNamedItem方法传入的是属性节点，添加属性节点，所以必须先使用document.createAttribute() 创建一个属性节点再添加进去
+
+***注意：attributes中的特性顺序不一定和他们在html或者xml中出现的顺序一样，另外由于IE7及更早的版本有可能会返回所有的属性节点即使你没有添加也会，所以不要惊讶***
+
+#### 每一个属性节点都会有一个specified属性，这个属性值为true表示要么在Html中指定了相应的属性要么是通过setAttribute方法设置了属性
+
+```
+function outputArrtibute(element) {
+    if (element.nodeType === 1) {
+       let resArr = []
+       let attrName
+       let attrValue
+       
+       for(let index = 0; index <= element.attributes.length - 1; index++)
+       attrName = element.attributes[index].nodeName
+       attrValue = element.attributes[index].nodeValue
+       
+       if (element.attributes[index].specified) {
+           resArr.push(`${attrName}=${attrValue}`)
+       }
+    }
+}
+```
+
+
+### document.createElement() 创建元素
+
+* 创建一个元素标签并返回这个元素的引用，创建的同时为这个元素添加了ownerDocument属性，当然也可以同时操作元素的特性
+
+### 元素的子节点
+
+* childNodes属性包含了元素的子节点，当然这些节点可能是元素，文本节点，注释，或者处理指令
+
+* 不同的浏览器对于childNodes的理解不一样
+
+* getElementsByTagName 可以在document对象上调用，也可以在元素上调用
+
+> 经过测试： getElmentsByTagName getElementsByClassName 都返回HtmlCollection对象，都可以在元素上调用， 但是getElementById不行，只能在document对象上调用
