@@ -2335,3 +2335,51 @@ function outputArrtibute(element) {
 * getElementsByTagName 可以在document对象上调用，也可以在元素上调用
 
 > 经过测试： getElmentsByTagName getElementsByClassName 都返回HtmlCollection对象，都可以在元素上调用， 但是getElementById不行，只能在document对象上调用
+
+
+### Text类型
+
+* nodeType 的值为3
+* nodeName的值为“#text”
+* nodeValue的值节点所包含的的文本
+* parentNode的值是一个Element
+* 没有子节点
+
+> 可以通过nodeValue的属性或者data属性访问text节点包含的文本
+
+* appendData(text) 将text添加到文本的末尾
+* deleteData(offset, count) 从offset指定的位置删除count个字符
+* insertData(offset, text) 从offset指定的位置插入text
+* replaceData(offset, count, text) 用text替换从offset指定的位置开始到 count数字位置的
+* splitText(offset) 从offset指定的位置将当前文本节点分成两个文本节点
+* substringData(offset, count) 提取从offset位置开始的到count个数字的位置的字符串
+
+
+### document.createTextNode()创建文本节点 
+
+* 这个方法接受一个参数就是要插入节点的文本
+
+* 创建文本节点的时候会同时为这个节点添加ownerDocument属性
+
+* 一般情况下每个元素只有一个文本节点，不过在某些情况下也会有多个文本节点，
+
+* 如果两个文本节点是同胞节点，那么这俩个文本节点就会链接起来，中间不会有空格
+
+> normalize() 为了规范文本节点，如果有两个或者多个节点，在父元素上调用这个方法就可以将子文本节点合并成一个文本节点
+
+***浏览器在解析文档时从来不会创建相邻的文本节点，这样的情况只会在操作dom方法的调用的时候出现***
+
+> 上面提到的splitText(offset) 方法和normalize() 相反  这个方法会将文本节点分割成两个，并且返回分割后的第二个字符
+
+### Comment类型 注释类型
+
+* 注释类型的nodeType的值是8
+* nodeName的值是“#comment”
+* nodeValue 的值是注释的内容
+* parentNode可能是Document或者Element
+* 没有子节点
+
+> Comment类型和Text类型继承自同一个基类，因此除了splitText这个方法之外他们都公用同一个方法，同时也可以通过Data或者nodeValue属性获得注释的内容
+
+
+**document.createComment()可以创建注释文本节点** 

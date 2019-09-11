@@ -157,3 +157,5 @@ chunks(chunk) {
 **filename** 允许去重写filename属性当且仅当是initial块的时候
 
 **enforce** 告诉webpack忽略掉minSize minChunks, maxAsyncRequests, maxInitalRequests总是为缓存组创建块
+
+
