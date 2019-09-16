@@ -2383,3 +2383,148 @@ function outputArrtibute(element) {
 
 
 **document.createComment()可以创建注释文本节点** 
+
+
+### CDATASection类型 
+
+* nodeType的值是4
+* nodeName的值是 “#cdata-section“
+* nodeValue的值是CDATA区域中的内容
+* parentNode可能是Document或者Element
+
+> 这个类型知识针对与XML的文档 大多数浏览器会把它解析为Comment类型或者Comment类型 并且可以使用document.createCDataSection()方法创建CDATA区域
+
+### DocumentType类型
+
+* nodeType的值是10
+* nodeName的值是doctype的名称
+* nodeValue的值为null
+* parentNode的值是Document
+* 没有子节点
+
+**支持这个类型的浏览器会把他的信息保存在document.doctype的中，有三个属性，其中只有name属性可以用，其中name属性保存的是文档的类型**
+
+### DocumentFragment类型 文档片段
+
+**DocumentFragment类型是没有标记的，他表示一个文档片段**
+
+* nodeType的值是11
+* nodeName的值是“#document-fragment”
+* nodeValue的值是null
+* parentNode的值null
+* 子节点可以是Element，Comment，Text，等
+
+文档片段还是很有用的，他继承了Node的所有方法，可以想操作dom一样去使用这个，可以用它创建一个文档片段，然后一次性插入到文档中，这样可以提高效率
+
+```
+var fragment = document.createDocumentFragment() 
+
+var ul = document.getElementById('myList')
+var li = null
+
+for(var i = 0; i < 3; i++) {
+    li = document.createElement('li')
+    li.appendChild(document.creaetTextNode('item' + i))
+    fragment.appendChild(li)
+}
+ul.appdChild(fragment)
+```
+
+### Attr类型
+
+元素特性在Dom中以Attr类型来表示，这个特性就是存在于元素中的attributes属性中的节点
+
+* nodeType的值是11
+* nodeName的值是特性的名称
+* nodeValue的值特性的值
+* parentNode的值null
+* 在Html中不支持子节点
+
+> 尽管他们也是节点，但是却不认为是Dom的一部分，开发人员最长使用的还是getAttribute，setAttribute，removeAttribute方法
+
+**可以使用document.createAttribute方法创建属性节点**
+
+```
+const attr = document.createAttribute('align')
+attr.value = 'left'
+
+element.setAttribute(attr)
+```
+
+### Dom操作技术
+
+#### 动态脚本
+
+使用script标签向页面总插入js代码，有两种方式，一种是外链js代码，一种是内链js代码，**但是他们的特性都是只要插入就会立即执行**
+
+```
+function loadScript(url) {
+    const script = document.creaetElement('script')
+    script.type = 'text/javascript'
+    script.src = url
+    document.body.appendChild(script)
+}
+
+loadScript('example.com/test.js')
+```
+
+```
+const script = document.createElement('script')
+script.type = 'text/javascript'
+script.appendChild(document.createTextNode('function sayHi(){alert('hi')}'))
+document.body.appendChild(script)
+```
+
+**注意，这样插入js代码有一定的兼容性问题要处理**
+
+
+### 动态样式
+
+添加动态样式的方式有两种，一种是link标签包含外部的文件，一种是style标签指定嵌入的样式文本，于动态脚本类似
+
+```
+const link = document.createElement('link')
+
+link.rel = 'stylesheet'
+link.type = 'text/css'
+link.href = 'style.css'
+
+const head = document.getElementByTagName('head')[0]
+head.appendChild(link)
+```
+
+
+```
+const style = document.createElement('style')
+style.type = 'text/css'
+
+try {
+    style.appendChild(document.createTextNode(body{ background-color: red;}))
+}catch(err) {
+    style.style.styleSheet.cssText = 'body {background-color: red}'
+}
+
+cosnt head = document.getElementByTagName('head')[0]
+head.appendChild(style)
+```
+
+> 跟动态脚本类似，这里做了错误处理，因为有一定的兼容性问题
+
+
+### 操作表格
+
+原生Dom操作表格比较麻烦，为此特意创建了一些专门用于表格的方法
+
+### NodeList & NamedNodeMap & HtmlCollection 
+
+这三个集合都是动态的，也就是说每当dom结构变化的时候，他们都会得到更新，因此他们始终保持着最新，最准确的信息，他们都是对dom的实时查询
+
+一下代码会创建一个死循环
+```
+const divs = document.getElementsByTagName('div')
+for (let i = 0; i <= divs.length - 1; i++) {
+     const div = document.createElement('div')
+     document.body.appendChild(div)
+}
+```
+> 如果要解决上面的问题，完成NodeList的遍历，那么可以将length属性通过基本类型复制
