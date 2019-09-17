@@ -2528,3 +2528,55 @@ for (let i = 0; i <= divs.length - 1; i++) {
 }
 ```
 > 如果要解决上面的问题，完成NodeList的遍历，那么可以将length属性通过基本类型复制
+
+
+# Dom扩展
+
+### querySelector() 方法
+
+**接受一个css选择符，返回与该模式匹配的第一个元素，如果没有找到匹配元素，返回null**
+
+> 注意这个方法可以在Document上和Element类型上调用他们 在document上调用这个方法会在整个文档中寻找元素，在element元素上调用这个方法会在这个元素的后代上寻找这个元素
+
+```
+const body = document.querySelector('body')
+
+const myDiv = document.querySelector('#mydiv')
+
+const selected = document.querySelector('.selected')
+
+const img = document.body.querySelector('img.button')
+```
+
+### querySelectorAll()
+
+**同样的接受一个css选择符，但是返回的是所有匹配到的元素，这个方法返回的是一个NodeList类型实例**
+
+### matchSelector() 
+
+> 这个方法接受一个参数，就是css选择符，然后调用元素与该选择符匹配就会返回true，否则就会返回false
+
+
+### 元素遍历
+
+对于元素间的空格，IE9及之前的版本不会返回文本节点，而所有浏览器都会文本节点，这样就会导致了childNodes类型和firstChild等属性的行为不一样，为了弥补这一差异，而同时又保持规范不变，新增了属性
+
+1. childElementCount 返回子元素的个数，不包括文本节点和注释
+2. firstElementChild 指向第一个元素，firstChild的元素版
+3. lastElementChild 指向最后一个元素，lastChild的元素版
+4. previousElementSibling 指向前一个同胞元素，previousSibling的元素版
+5. nextElementSibling 指向后一个同辈元素，nextSibling的元素版
+
+
+### getElementsByClassName() 
+
+接受一个或者多个类名，返回带有指定类名的NodeList类型，传入的类名的顺序什么的都不重要，
+
+### classList属性
+
+className属性可以获得元素的类名字符串，新增了一个操作类名的方法就是classList属性，这个属性是新集合类型DOMTokenList的实例，这个类型的方法和属性有以下：
+
+1. add(value) 将指定的字符串添加列表中，如果存在就返回true，否则就会返回fasle
+2. contains(value) 表示列表中是否存在给定的值，如果存在就会返回true，否则就返回false
+3. remove(value) 从列表中删除给定的字符串
+4. toggle(value) 如果列表中存在就删除，如果不存在就会删除
