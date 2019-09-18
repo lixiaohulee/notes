@@ -2580,3 +2580,185 @@ className属性可以获得元素的类名字符串，新增了一个操作类�
 2. contains(value) 表示列表中是否存在给定的值，如果存在就会返回true，否则就返回false
 3. remove(value) 从列表中删除给定的字符串
 4. toggle(value) 如果列表中存在就删除，如果不存在就会删除
+
+
+### 焦点管理
+
+#### document.activeElement 属性 
+
+这个属性非常的有用，他表示Dom中当前获得了焦点的元素，
+
+元素获得焦点的方式有以下几种方式
+
+1. 页面加载
+2. 用户输入
+3. 代码中调用focus()方法
+
+> 默认情况下，文档刚刚加载完成时，document.activeElement中保存的是document.body元素，文档加载期间，document.activeElement保存的是null
+
+**document.hasFocus() 方法可以确定文档是否获得了焦点**
+
+***document.activeElement.blur() 这个问题可以用来解决移动端，点击表单元素同时会出现软键盘的问题*** 
+
+### HtmlDocument的变化
+
+#### readyState属性
+
+document.readyState 表示浏览器加载文档的状态，
+
+1. loading 表示正在加载
+2. complete 已经加载完成
+
+```
+if (document.readyState === 'complete') {
+    // do something
+}
+```
+
+#### compatMode 页面渲染方式，标准模式还是混杂模式
+
+1. document.compatMode === 'CSS1Compat' 标准模式
+2. document.compatMode === 'BackCompat' 混杂模式
+
+```
+if (document.compatMode === 'CSS1Compat') {
+    // do something under standards mode
+}else {
+    // do somethind under quirks mode
+}
+```
+
+#### document.head 属性获取head标签
+
+html5新增了可以获取head标签的方式，就是document.head 
+
+```
+const head = 
+document.head || document.getElementsByTagName('head')[0]
+```
+
+#### 字符集属性
+
+获取文档使用的字符集属性是： document.charset 这个属性可读可写
+
+document.defaultCharset 表示根据默认浏览器及操作系统的设置，文档设置的字符集应该是什么。
+
+**document.defaultCharset有一定的兼容性**
+
+可以通过这两个属性对字符集进行精确的控制
+
+#### 自定义属性。data-examplename
+
+html5规定可以为元素添加跟渲染无关的属性，格式必须是data-开头，属性值具体是什么都可以，然后可以通过dataset属性访问添加的自定义属性，这个属性返回一个DOMStringMap的实例，也就是名值对，
+
+```
+<div data-name="lee" data-age="22" class="me"></div>
+
+const me = document.querySelector('.me')
+me.dataset.name // lee
+me.dataset.age // 22
+
+```
+
+**dataset属性设置的自定义属性可读可写**
+
+
+### 插入标记
+
+#### innerHtml属性
+
+读模式下： 这个属性返回与调用元素的所有子节点，包括元素，文本，注释
+写模式下： 根据指定的值创建新的DOM树，然后用这个DOM树完全替换调用原先的所有子节点
+
+**这个属性返回的字符串，但是不要指望所有的浏览器会返回一样的结果，**
+
+> 在写模式下 innerHTML的值会被解析成DOM子树，替换所有的子节点，
+
+**注意点：**
+
+1. 当插入html的时候一样，但是返回的时候不同的浏览器可能就返回不同的html了
+
+2. 当插入script标签这样的问题时，大多数浏览器不会执行其中的脚本，但是IE8下及更早版本下能执行，但是有限制条件，一是必须指定defer属性，二是有作用域的元素之后
+
+```
+div.innerHTML = "_<script defer>console.log(33)</script>"  //-
+
+div.innerHTML = "<div></div><script>console.log(33)</script>"
+
+div.innerHTML = "<input type=\"hidden\"><script defer> console.log(33)</script> 
+```
+
+#### outerHTML属性
+
+这个属性可读可写，就是返回调用它的元素及所有的子节点，在写模式下，根据指定的字符串创建新的DOM树，然后完全替换调用元素
+
+> 当然这个属性还是有一定的兼容性问题
+
+#### insertAdjacentHTML()方法
+
+插入标记的最后一个新增方法，接受两个参数，
+
+第一个参数是下列值：
+
+1. beforebegin 在当前元素之前插入一个紧邻的同辈元素
+2. afterbegin 在当前元素之下插入一个新的子元素或者在第一个元素之前插入新的子元素
+3. beforeend 在当前元素之下插入一个新的子元素或者在最后一个元素之后插入一个新的子元素
+4. afterend 在当前元素之后插入一个紧邻的同辈元素
+
+第二个参数就是一个HTML字符串
+
+
+#### 内存与性能问题
+
+注意在使用上面介绍的替换子节点的可能会导致内存占用问题，尤其在IE中，问题更加明显，因为在删除带有事件处理程序或者引用了其他js对象子树的元素时就会导致内存占用问题，因为在删除元素的时候绑定的事件处理程序没有一并删除，所以删除的多了自然会导致内存占用问题，应该是在删除的时候先讲绑定的事件处理程序手动删除掉，
+
+> 对于上面的api来说如果频繁的使用就会导致问题，但是如果在插入大量html的时候还是优先使用innerHTML这样的属性，
+
+
+
+#### scrollIntoView() 这是一个牛逼的方法
+
+这个方法也是html5新增的操作滚动页面的
+
+**可以在元素上调用这个方法，通过这个方法就可以让调用的元素滚动出现在视口中，这个方法可以传入参数，为true或者不传入任何参数表示窗口滚动之后调用元素的顶部会和视口顶部尽可能平齐，如果传入false表示调用元素尽可能会全部出现在视口中，可能的话调用元素底部会与视口顶部平齐， 不过顶部不一定平齐**
+
+> 那种点击元素滚动页面的效果应该使用了这个api了
+
+#### 文档模式
+
+文档模式决定你可以使用什么样的功能，不同的文档模式能够使用的api不同的，可以使用什么样级别的css
+
+
+#### children属性
+
+这个属性只返回一个元素的子元素节点，不会返回文本节点等，返回的类型是HtmlCellection的实例，除此之外它和childNodes属性没有什么区别
+
+#### contains() 方法
+
+这个方法可以用来判断某个节点是不是另一个节点的后代，但是DOM level3新增了一个方法叫做compareDocumentPosition() 可以精确判断两个节点的关系 这个方法会返回具体数据值
+
+1  => 无关
+
+2  => 在参考节点之前
+
+4  => 在参考节点之后
+
+8  => 包含
+
+16 => 被包含
+
+#### 插入文本 innerText outerText
+
+不像innerHTML outerHTML 那么幸运，这两个属性并没有被纳入规范，但是这个属性可读可写，在调用获取时会返回所有的文本，但是在写入时会替换所有的元素
+
+
+**outerText 和 innerText在读取的时候没有什么去别, 但是在设置的时候会有区别，设置的时候会outer会包含调用元素**
+
+
+#### 滚动
+
+scrollIntoViewNeeded(alignCenter) 元素不可见，让它滚动然后可见
+
+scrollByLines(lineCount) 将元素滚动指定的高度
+
+scrollByPages(pageCount) 滚动指定的页面高度
