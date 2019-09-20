@@ -2762,3 +2762,60 @@ scrollIntoViewNeeded(alignCenter) 元素不可见，让它滚动然后可见
 scrollByLines(lineCount) 将元素滚动指定的高度
 
 scrollByPages(pageCount) 滚动指定的页面高度
+
+
+# DOM2 和 DOM3
+
+### 访问元素的样式
+
+任何使用style特性的元素在js中都对应有一个style属性，这个属性返回的是CSSstyleDeclaration对象包含样式信息，对于CSS特性对象的属性，如果是短线的话可以在js中用驼峰访问
+
+	background-image => backgroundImage
+	
+注意： 有些属性不能直接转换为js的属性的，比如float属性，为这个这个float在js中属于保留字，所有得用cssFloat
+
+> 可以通过js中的style对象的属性直接设置样式，设置的样式会直接反应在页面中
+
+
+#### 对style属性的扩展
+
+1. cssText 可以访问style特性中的css代码  这个属性可读可写
+2. length属性表示css属性的数量
+3. parentRule表示css信息的cssRule对象，
+4. getPropertyCssValue(属性名称) 返回给定属性的cssValue对象
+5. getPropertyPriority(属性名称) 如果给定属性设置了！important 则返回important 否则返回空字符串
+6. getPropertyValue(属性名称) 返回给定属性的属性值
+7. item(index) 返回给定位置的属性名称
+8. removeProperty(属性名称) 从样式中删除给定属性
+9. setProperty(属性名称，属性值，优先级) 优先级的值可以是空字符串或者important
+
+
+
+#### 计算的样式 getComputedStyle方法
+
+***注意了： 虽然我们可以通过style属性获得任何元素的样式，但是它不包含哪些层叠而来并影响当前元素的样式信息，比如说通过style标签包含的样式或者浏览器默认的样式，而这个getComputedStyle方法可以获得真实应用到这个元素的样式，记住它是只读的***
+
+getComputedStyle(元素，伪元素信息) 这里如果没有伪元素的信息可以设置为null
+
+1. 这个方法返回的也是一个CSSstyleDeclaration对象，包含所有的计算样式
+2. 只读
+3. 注意这个方法实在document.defaultView.getComputedStyle(元素，伪类)
+4. 在IE浏览器中每个具有style属性的元素还有一个currentStyle属性表示计算属性
+
+#### 操作样式表
+
+CSSStyleSheet 类型表示的样式表，包括通过link标签包含的样式表和style元素定义的样式表。
+
+它的属性都有：
+
+1. disabled 表示样式表是否被禁用的布尔值，只有这个属性是可读可写的
+2. href 如果样式表示通过link标签引入的，则是样式表的url，如果不是则是null
+3. media 当前样式表支持的所有的类型集合，有个length属性可以通过item()访问，如果集合是空的则表示样式表适用所有的媒体
+4. ownerNode 如果样式表是link或者style标签引入的，则指向他们，如果是@import则为null
+5. parentSTyleSheet 如果样式表示@import导入的，则这个属性指向导入它的样式表的指针
+6. title ownerNode的title
+7. type 表示样式表类型的字符串，这个字符串是“style/css”
+8. cssRules 样式表中的包含的样式规则的集合
+9. ownerRule 如果样式表是@import导入的，那么这个属性表示一个指针，
+10. deleteRule(index) 删除cssRules集合中的指定位置的规则
+11. insertRule(index) 向cssRules集合插入指定的rule字符串
