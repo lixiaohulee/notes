@@ -2819,3 +2819,118 @@ CSSStyleSheet 类型表示的样式表，包括通过link标签包含的样式�
 9. ownerRule 如果样式表是@import导入的，那么这个属性表示一个指针，
 10. deleteRule(index) 删除cssRules集合中的指定位置的规则
 11. insertRule(index) 向cssRules集合插入指定的rule字符串
+
+#### document.styleSheets 获取所有的样式表
+
+通过这个属性可以获得页面中的样式表，是所有的样式表，如果修改一条就会影响所有的元素含有这个样式的
+
+* insertRule(样式，位置) 
+
+添加样式表
+
+* deleteRule(位置)
+
+### 元素大小
+
+#### 偏移量 
+
+元素在屏幕上占用的所有的可见的空间，元素的可见大小由其高度，宽度，内边距，滚动条和边框大小确定
+
+1. offsetHeight 元素在垂直方向上占用的空间的大小，包括元素高度，上下边框，滚动条的高度
+
+2. offsetWidth 元素在水平方向上占用的空间大小，包括元素宽度，滚动条的宽度，上下边框
+
+3. offsetLeft 元素的外边框至包含元素的左内边框之间的距离. (**这句话有待研究**)
+
+4. offsetTop 元素的上边框至包含元素的上边框之间的距离
+
+**这里说的offsetLeft，offsetTop属性跟包含元素有关系，包含元素可以用offsetParent属性访问，但是要记住： offsetParent不一定是parentNode**
+
+> 上面的3，4有待研究的问题已经研究清楚，
+
+offsetParent这个元素指的是满足一下条件的
+
+1. 是当前元素的祖先元素
+
+2. 最靠近element
+
+3. 是定位元素，即position属性不为static
+
+**祖先元素中没有存在定位元素，那么offsetParent元素可能就是body**
+
+
+***获取一个元素的大小就是调用offsetHeight， offsetWidth就可以了，这两个属性就是表示元素的大小，包括content内容，padding，border***
+
+如何知道一个元素的偏移量呢
+
+```
+
+function getElementLeft(element) {
+    const actualLeft = element.offsetLeft
+    const current = element.offsetParent
+    
+    while(current !== null) {
+    
+        const borderWidth = window.getComputedStyle(current).borderLeftWidth
+        
+        actualLeft += current.offsetLeft + borderWidth
+        
+        current = current.offsetParent
+    }
+    
+    return actualLeft
+}
+```
+
+
+#### 客户去大小 clientWidth clientHeight
+
+客户区大小指的是元素的内容区域加上内边距大小
+
+content + padding
+
+
+**注意客户区大小和偏移量大小的区别，客户去大小是指的是content + padding
+而偏移量大小指的是content + padding + 滚动条大小 + border**
+
+
+```
+
+获取适口宽高
+
+function getViewport() {
+    if (document.compatMode === 'BackCompat') {
+        return {
+             width: document.body.clientWidth
+             height: document.body.clientHeight
+        }
+    }else {
+         return {
+             width: document.documentElement.clientWidht
+             height: document.documentElement.clientHeight
+         }
+    }
+}
+```
+
+#### 滚动大小 scrollWidth scrollHeight
+
+
+滚动大小指的是包含滚动内容的元素的大小，
+
+1. scrollHeight 在没有滚动条的情况下，元素的内容的总高度 和clientHeight一样
+
+2. scrollWidth 在没有滚动条的情况下，元素的内容的总高度 和clientWidth一样
+
+3. scrollLeft 被隐藏在内容区域左侧的像素值，设置这个属性可以改变滚动条的位置
+
+4. scrollTop 被隐藏在内容区域上方的像素值，设置这个属性可以改变滚动条的位置
+
+> 对于没有包含滚动条的情况下的页面而言，scrollWidth和scrollHeight与clientWidth clientHeight之间的关系不是特别清晰，
+
+
+#### getBoundingClientRect() 获取元素的大小
+
+这个方法返回元素的信息，包括元素的width height top left right bottom
+
+对于不支持这个方法的浏览器来说，可以通过其他途径获得元素的大小，一般来说，top和bottom的差值就是offsetHeight的值，left和right的值就是offsetWidth的值
