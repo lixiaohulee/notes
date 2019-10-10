@@ -3000,3 +3000,67 @@ btn.onclick= function() {
 
 dom2级事件处理程序指定了两个方法，addEventListener removeEventListener
 所有的dom节点都包含这两个方法，并且他们都接受这3个参数，要处理的事件名称，事件处理函数，一个布尔值true表示在捕获阶段调用事件处理函数，false表示在冒泡阶段处理调用处理函数
+
+> addEventListener可以添加多个事件处理程序，同时通过它添加的事件必须通过removeEventListener移除
+
+### IE事件处理程序
+
+
+attachEvent() detachEvent() 这两个方法没有第三个参数，所以默认都添加到冒泡阶段
+
+> 多次添加事件处理程序，执行的顺序是反的，后添加的先执行
+
+
+### 实现一个跨浏览器的事件添加和移除功能方法
+
+Dom2级规范就是addEventListener Dom0级规范就是element.onclick = handle
+
+```
+const EventUtil = {
+    addHandle: function (element, type, handle) {
+         //判断dom2级规范存在吗
+         if (element.addEventListener){
+             element.addEventListener(type, handle, false)
+         }else if (element.attachEvent) {
+             element.attachEvent('on' + type, handle, false)
+         }else {
+             //dom0级规范
+             element[`on${type}`] = handle
+         }         
+    },
+    removeHandle: function (element, type, handle) {
+        if (element.removeEventListener) {
+            element.removeEventListener(type, handle, false)
+        }else if (element.attachEvent) {
+            element.detachEvent('on' + type, hanle)
+        }else {
+            element[`on${type}`] = null
+        }
+    }
+}
+```
+
+
+### 事件对象
+
+兼容dom的浏览器会将一个对象传入到事件处理程序中，无论是dom0级还是dom2级都会传入这个对象，event对象默认就是处理函数的第一个参数
+
+event对象
+
+|属性/方法| 类型 | 读写 | 说明 |
+|--------|----| ----| ----|
+|bubbles | Boolean | read | 表明事件是否冒泡 |
+|cancelable | Boolean | read | 是否可以取消事件的默认行为 | 
+| currentTarget | Element | read | 当前正在处理事件的那个元素 | 
+| defaultPrevented | Boolean | read | true表示已经调用了preventDefault()|
+| detail | Integer | read | 事件相关的细节信息 | 
+| eventPhase | Integer | read | 调用事件处理程序的阶段，1表示捕获阶段，2表示处理目标阶段，3表示冒泡阶段 |
+| preventDefault() | Function | read | 取消事件的默认行为 | 
+| stopImmediatePropagation() | Function | read | 取消事件的进一步捕获或者冒泡，同时阻止任何事件处理程序被调用 | 
+| stopPropagation() | Function | readf | 取消事件的进一步捕获和冒泡，如果bubbles为true可以调用这个方法|
+| target | Element | read | 事件的目标 |
+| trusted | Boolean| read | 为true表示事件是浏览器生成的，为false表示事件是由开发人员通过js添加的|
+| type| String | read | 被触发的事件的类型 | 
+| view | AbstractView | read | 与事件关联的抽象视图，等同于发生事件的window对象|
+
+> 在事件处理程序内部this始终等于currentTarget的值，当然如果事件处理程序直接指定给了目标元素，那么他们三个也是相等的
