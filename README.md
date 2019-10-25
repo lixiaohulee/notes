@@ -3160,3 +3160,70 @@ unload事件是与load事件对应的，这个事件是在页面被完全卸载�
 页面上的所有元素都支持鼠标事件，除了mouseenter和mouseleave 所有的鼠标事件都会冒泡。也可以取消，不过取消鼠标事件将会影响浏览器的默认行为
 
 在同一个元素上触发mousedown和mouseup事件，才会触发click事件，如果mousedown和mouseup中的一个被取消，就不会触发click事件，类似的只有触发两次click事件才会触发dbclick事件
+
+
+### 客户区坐标位置
+
+鼠标事件都是在浏览器视口中的特定位置发生的，这个位置保存在事件对象的clientX和clientY属性中，所有的浏览器都支持这俩个属性。
+
+```
+<div class="box"></div>
+
+const box = document.querySelector('.box)
+box.addEventLintener('click', e => {
+    console.log(e.clientX, e.clientY)
+}, fasle)
+```
+
+### 页面坐标位置
+
+通过上面的客户区坐标位置可以知道元素在视口中什么的位置，而页面坐标通过对象的pageX和pageY属性，这可以告诉你事件在页面中的什么位置发生
+
+```
+<div class="box"></div>
+
+const box = document.querySelector('.box)
+box.addEventLintener('click', e => {
+    console.log(e.pageX, e.pageY)
+}, fasle)
+```
+
+
+**注意： 在没有滚动条的情况下，pageX和pageY同clientX和clientY的值是相等的**
+
+
+IE浏览器(before version8)不支持事件对象页面的坐标，不过可以同滚动信息和客户区大小计算出来，
+
+```
+<div class="box"></div>
+
+const box = document.querySelector('.box)
+box.addEventLintener('click', e => {
+    let pageX = e.pageX
+    let pageY = e.pageY
+    
+    if (undefined === pageX) {
+        pageX = e.clientX + document.body.scrollLeft || document.documentElement.scrollLeft
+    }
+    
+    if (undefined === pageY) {
+        pageY = e.clientY + document.body.scrollTop. || document.documentElement.scrollTop
+    }
+    
+    console.log(pageX, pageY)
+}, fasle)
+```
+
+
+### 屏幕坐标位置
+
+鼠标事件发生时，还有一个相对于整个电脑屏幕的位置，通过screenX和screenY属性可以确定事件发生的相对于整个屏幕的坐标信息
+
+```
+<div class="box"></div>
+
+const box = document.querySelector('.box)
+box.addEventLintener('click', e => {
+    console.log(e.screenX, e.screenY)
+}, fasle)
+```
