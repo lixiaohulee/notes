@@ -3227,3 +3227,60 @@ box.addEventLintener('click', e => {
     console.log(e.screenX, e.screenY)
 }, fasle)
 ```
+
+
+### 修改键
+
+虽然鼠标事件主要是鼠标触发的，但是在按钮鼠标时同时按钮键盘上的某些键也可以影响所采取的操作，这些键就是shift ctrl alt meta(windows中对应的就是windows键，mac中对应的就是cmd键) 可以通过事件对象的shiftKey ctrlKey altKey metakey属性来得知是否同时按下了这些键，这四个属性的属性值全是布尔值，如果为true则表示按下了这个键
+
+
+```
+const box = document.querySelector('.box')
+box.addEventListener('click', e => {
+    console.log(e.shiftKey, e.ctrlKey, e.altKey, e.metaKey)
+}, false)
+```
+
+### 鼠标按钮
+
+对于mousedown和mouseup事件来说，则在其event对象存在一个button属性，表示按下或者释放的按钮
+
+button属性的三个属性值分别是0，1，2，0表示主鼠标按钮(鼠标左键)，1表示中间的鼠标按钮（鼠标滚轮），2表示鼠标按钮（鼠标右键）
+
+**IE8及之前的版本，也提供了button属性，但是这个属性的值跟dom的button属性有很大的差异，所以真正用到的时候需要做兼容处理**
+
+
+### 更多的事件信息
+
+DOM2级事件规范在event对象中还提供了detail属性，detail属性的值是一个数值，表示鼠标在同一个像素位置上单击了多少次，一个mousedonw和mouseup算作一次单击，从1开始累加，如果换一个位置单击则会重置为0
+
+
+### 滚轮事件
+
+mousewheel事件，这个事件可以在任何元素上触发，最终冒泡到document或者window上，事件event对象除了标准的事件对象属性外还有一个wheelDelta属性，当滚轮向前滚动时是120的倍数，向后滚动时是-120的倍数
+
+
+### 触摸设备
+
+1. 不支持dbclick事件
+
+2. 轻击可单击元素就会触发mousemove事件，
+
+3. mousemove事件也会触发mouseover和mouseout事件
+
+4. 两个手指放在屏幕上且页面随手指移动而滚动时会触发mousewheel和scroll事件
+
+
+### 键盘和文本事件
+
+DOM2级事件最初规定了键盘事件，但在最终定稿之前有删除了相应的内容，所以键盘事件主要遵循的是DOM0级标准
+
+* keydown 当用户按钮键盘上的任意键时触发，如果按住不放的话就会重复触发此事件
+
+* keypress 当用户按下键盘上的字符键时触发，如果按住不放的话就会重复触发此事件 另外按住Esc键也会触发这个事件
+
+* keyup 当用户释放键盘的键时触发
+
+**只有一个文本事件，textInput事件，用意是将文本显示给用户之前更容易拦截文本，文本插入文本框之前就会触发textInput事件**
+
+用户
