@@ -3283,4 +3283,49 @@ DOM2级事件最初规定了键盘事件，但在最终定稿之前有删除了�
 
 **只有一个文本事件，textInput事件，用意是将文本显示给用户之前更容易拦截文本，文本插入文本框之前就会触发textInput事件**
 
-用户
+### textInput事件 (DOM3级事件)
+
+textInput事件可以用来补充keypress事件的，但是他们二者还是有很大的区别的
+
+1. 任何可以获得焦点的元素都可以触发keypress事件，但是只有可编辑区域才能触发textInput事件
+
+2. textInput事件只有在用户按下能够实际输入的实际字符的时候才会被触发，而keypress事件则会在按下那些能够影响文本显示的按键时也会触发，比如退格键
+
+**由于textInput事件主要考虑的是字符，所以他的event对象上有个属性叫做data，表示用户实际输入的字符**
+
+> event对象上还有一个属性叫做 inputMethod 表示把文本输入到文本框中的方式，
+比如0表示浏览器不确定用户怎么输入的，1表示使用键盘输入的，等等。。。
+
+
+### 设备中的键盘事件
+
+按下了遥控器的按键
+
+
+### 复合事件
+
+复合事件是DOM3级事件中新添加的一类事件，用于处理IME的输入序列，IME输入法编辑器，可以让用户输入在物理键盘中找不到的字符，IME通常需要同时按住多个键，但最终只输入一个字符，复合事件就是针对和处理这种输入而设计的
+
+* compositionstart 在IME的文本复合系统打开是触发的
+
+* compositionupdate 在向输入字段中插入新字符时触发的
+
+* compositionend 在IME的文本复合系统关闭时触发的
+
+### 变动事件
+
+DOM2级的变动事件能够在DOM中的某一部分变化时给出提示
+
+* DOMSubtreeModified 在一个节点作为子节点插入到另一个节点时触发
+
+* DOMNodeRemoved 在节点从其父节点被移除时触发
+
+* DOMNodeInserted 在一个节点作为子节点被插入到另一个节点时触发
+
+* DOMNodeInsertedIntoDocument 在一个节点被直接插入文档或痛殴子树间接被插入到文档之后触发，在DOMNodeInserted之后触发
+
+* DOMNodeRemovedFromDocument 在一个节点被直接从文档中移除或者通过子树间接移除之前触发，这个事件在DOMNodeRemoved之后触发
+
+* DOMAttrModified 在特性被修改之后触发
+
+* DOMCharacterDataModified 在文本节点的值发生变化时触发
