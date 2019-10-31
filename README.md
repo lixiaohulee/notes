@@ -3329,3 +3329,57 @@ DOM2级的变动事件能够在DOM中的某一部分变化时给出提示
 * DOMAttrModified 在特性被修改之后触发
 
 * DOMCharacterDataModified 在文本节点的值发生变化时触发
+
+### HTML5事件
+
+#### contextmenu事件
+
+用于表示何时应该展示上下文菜单，以便开发人员取消默认的上下文菜单，从而展示自己的自定义菜单，这个事件是冒泡的，可以为document指定一个处理程序，用以处理页面的发生的所有此类事件，这个事件的目标就是发生用户操作的元素
+
+**上下文菜单就是用户单击鼠标右键出现的系统默认的菜单，可以通过prevenDefalut() 或者 returnValue = false取消默认行为展示**
+
+
+#### beforeunload事件
+
+这个事件在window对象上触发，为了让开发人员可能在页面卸载前阻止这一操作，这个事件会在浏览器卸载页面之前触发，可以通过它来取消卸载和恢复使用原先的页面
+
+必须将e.returnValue的值设置成要显示给用户的字符串
+
+```
+window.addEventListener('beforeunload', e => {
+    e.returnValue = 'what i want you know'
+})
+```
+
+#### DOMContentLoaded事件
+
+window的load事件会在页面中的一切元素加载完毕之后触发，但是这个过程可能因为要加载外部的资源比如图像，JavaScript文件，css文件等颇费周折，但是DOMContentLoaded事件则只在形成完整的DOM树之后触发，可以在window或者document对象上添加这个事件，不够它的目标是document
+
+**DOMContentLoaded事件会永远在load事件之前触发**
+
+
+#### readystatechange事件
+
+IE为DOM文档中某些部分提供了readystatechange事件，这个事件的目的是提供与文档或者元素加载状态有关的信息，支持readystatechange事件的每个对象都有一个readystate属性，可能包含下列5个值的中的一个
+
+* uninitialized 对象尚未初始化
+
+* loading 对象正在加载
+
+* loaded 对象加载数据完成
+
+* interactive 可以操作对象了，但还没有完全加载
+
+* complete完成 对象已经加载完成
+
+**并非所有的对象都会经历这几个状态**
+
+#### pageshow事件和pagehide事件
+
+往返缓存可以在用户使用前进和后退按钮的时候加快页面的转换速度
+
+pageshow事件就是在页面显示时触发，无论页面是否来自缓存，pageshow事件会在load事件触发后触发，会在页面状态恢复的那一刻触发，另外要注意的是虽然这个事件的目标是document，但是必须将这个事件添加到window对象上
+
+#### hashchange事件
+
+在url的参数列表，就是#后面的额所有字符串发生变化时通知开发人员，必须将hashchange事件添加到window对象上，
