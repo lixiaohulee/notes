@@ -3383,3 +3383,96 @@ pageshow事件就是在页面显示时触发，无论页面是否来自缓存，
 #### hashchange事件
 
 在url的参数列表，就是#后面的额所有字符串发生变化时通知开发人员，必须将hashchange事件添加到window对象上，
+
+
+### 设备事件
+
+
+* orientationchange事件
+
+* MozOrientataion事件
+
+* deviceorientation事件
+
+* devicemotion事件
+
+
+### 触摸事件和手势事件
+
+* touchstart事件触摸屏幕时触发的，即使已经有一个手指放在了屏幕上也会触发
+
+* touchmove 当手指在屏幕上滑动时连续的触发，事件发生期间调用preventDefault()可以阻止滚动
+
+* touchend 当手指从屏幕上移开时触发
+
+* touchcancel 当系统停止跟踪时触发
+
+> 以上几个事件都会冒泡，也都可以取消，每个触摸事件的event对象除了正常的dom属性外，还增加了touches targetTouchs changeTouches属性，
+
+* touches 表示当前跟踪的触摸操作的touch对象的数组
+
+* targetTouchs。特定于事件目标的touch对象的数组
+
+* changeTouches 表示自上次触摸以来发生了什么改变的touch对象的数组
+
+注意：每一个touch对象还有一下属性
+
+1. clientX 触摸目标在视口中的x坐标
+
+2. clientY 触摸目标在视口中的y坐标
+
+3. identifier 标识触摸的唯一ID
+
+4. pageX 触摸目标在页面中的x坐标
+
+5. pageY 触摸目标在页面中的y坐标
+
+6. screenX 触摸目标在屏幕中的y坐标
+
+7. screenY 触摸目标在屏幕中的y坐标
+
+8. target 触摸的dom节点目标
+
+
+### 手势事件
+
+
+Safari引入了一组手势事件
+
+* gesturestart事件 当一个手指已经按在屏幕上而另一个又触摸屏幕时触发
+
+* gesturechange 当触摸在屏幕上的任何一个手指的位置都发生改变时触发
+
+* gestureend 当任何一个手指从屏幕上移开时触发
+
+
+> 手势事件和touch事件有一定的关联，同时也会冒泡
+
+
+### 内存和性能
+
+在JavaScript中添加到页面上的事件处理程序将会直接关系到页面的整体性能，原因是： 每个函数都是对象，都会占用内存，内存中的对象越多性能就会越差，另外事先制定所有的事件处理程序而导致的dom访问次数会延迟整个页面的交互时间，
+
+
+#### 事件委托
+
+处理事件处理程序过多的问题和解决方案就是事件委托，事件委托利用了事件冒泡，只指定一个事件处理程序就可以管理一类所有的事件，比如click事件会冒泡到document，所以我们可以为页面指定一个click的事件处理程序，而不必给每个可单击元素分别添加了事件处理程序
+
+
+#### 移除事件处理程序
+
+每当将事件处理添加到元素中时，运行着的浏览器代码和支持页面交互的JavaScript代码之间就会建立一个链接，这种链接越多页面执行起来就会越慢，这种问题的解决思路就是采用事件委托和恰当时候移除事件处理程序，因为内存中留有那些空的不用的事件处理程序会造成内存和性能的问题
+
+```
+<div id="box"></div>
+
+<script>
+
+const btn = document.querySelector('#box')
+btn.onclick = function(e) {
+    btn.onclick = null
+    console.log('moved')
+}
+</script>
+```
+
