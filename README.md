@@ -3476,3 +3476,139 @@ btn.onclick = function(e) {
 </script>
 ```
 
+### 事件模拟
+
+可以使用JavaScript来在任意时刻触发特定的事件
+
+
+#### createEvent()
+
+可以在document对象上调用这个方法，同时给这个方法传入一个参数，创建一个event对象吗，这个参数表示要创建的事件类型的字符串，具体的字符串有以下：
+
+1. UIEvents 一般的UI事件，鼠标事件和键盘事件都属于UI事
+
+2. MouseEvents 一般的鼠标事件
+
+3. MutationEvents 一般的DOM变动事件
+
+4. HTMLEvent 一般的html事件 
+
+**注意： 以上的参数都是复数，但是在DOM3级规范中这些参数都是单数**
+
+
+在创建了event对象后还需要使用与事件有关的信息进行初始化
+
+模拟事件的最后一步是触发事件，这一步需要使用**dispatchEvent()**方法，所有支持事件的dom元素都会支持这个方法
+
+
+#### 模拟鼠标事件
+
+1. 调用document.createEvent() 传入字符串MouseEvents  
+
+2. 返回的对象上有一个名叫initMouseEvent()的方法 用于指定与该鼠标事件有关的信息， 这个方法接受15个参数
+
+
+参数列表：
+
+1. type  比如可以是click
+
+2. bubbles 表示是否可以冒泡
+
+3. cancelable 表示事件是否可以取消
+
+........
+
+
+```
+
+const btn = document.getElementById('myBtn')
+
+const event = document.createEvent('MouseEvents')
+
+event.initMouseEvent('click', true, true, document.defaultView, 0,0,.....)
+
+btn.dispatchEvent(event)
+```
+
+#### 模拟键盘事件
+
+DOM3级规定，调用createEvent并传入KeyboardEvent就可以创建一个键盘事件，返回的对象有一个initKeyEvent()方法 接受以下参数
+
+1. type 比如可以是keydown
+
+2. bubbles 表示是否可以冒泡
+
+3. modifiers 修改键列表 
+
+4. repeat 在一行中按了这个键多少次
+
+**注意在firefox中传入KeyEvents就可以创建一个键盘事件**
+
+```
+
+const txtBox = document.querySelector('.myTxtBox')
+
+const event = document.createEvent('KeyboardEvent')
+
+event.initKeyboardEvent('keydown', true, true, document.defaultView, ....)
+
+txtBox.dispatchEvent(event)
+```
+
+#### 模拟其他事件
+
+除了鼠标事件和键盘上事件，还可能经常需要模拟的事件有： dom变动事件和html事件
+
+
+#### 模拟dom变动事件
+
+1. createEvent('MutationEvents')
+
+2. event.initMuatationEvent() 参数列表有： type, bubbles, cancelable, relatedNode, preValue, newValue, attrName, attrChagne等
+
+```
+
+模拟DOMNodeInserted事件
+
+const event = document.createEvent('MutationsEvents')
+
+event.initMutationEvent('DOMNodeInserted', true, true,...)
+
+target.dispatchEvent(event)
+```
+
+#### 自定义dom事件
+
+自定义事件不是由dom原生触发的，它的目的是让开发人员创建属于自己的事件，
+
+1. createEvent('CustomEvent')  返回的对象有一个名称为initCustomEvent() 的方法 接受四个参数： type, bubbles, cancelable, detail,
+
+
+```
+const event = document.createEvent('CustomEvents')
+
+event.initCustomEvent(myEvent, true, false, 'hello world')
+
+div.dispatch(event)
+```
+
+#### IE中的模拟事件
+
+1. 调用createEventObject() 创建event对象
+
+2. 手动为event对象添加需要的信息
+
+event.type = 'click'
+
+event.bubbles = true
+
+.....
+
+
+### 总结
+
+1. 有必要限制一个页面中的事件处理程序的数量 太多会占用太多内存
+
+2. 建立在冒泡机制上的事件委托技术，可以有效的减少事件处理程序的数量
+
+3. 建议在浏览器卸载页面之前移除页面中所有的事件处理程序
