@@ -3612,3 +3612,130 @@ event.bubbles = true
 2. 建立在冒泡机制上的事件委托技术，可以有效的减少事件处理程序的数量
 
 3. 建议在浏览器卸载页面之前移除页面中所有的事件处理程序
+
+
+# 表单脚本
+
+在HTML中，表单是由form元素表示，在js中使用HTMLFormElement类型表示继承于HTMLElement类型
+
+表单类型除了html特性还有独有的属性：
+
+1. acceptCharset服务器能够处理的字符集
+
+2. action 接受请求的URL
+
+3. elements 表示所有控件的集合
+
+4. enctype 请求的编码类型
+
+5. length 表单控件的数量
+
+6. method 请求的类型 get 或者 post
+
+7. name 表单的名称 等价于html的name属性
+
+8. reset() 表单重置
+
+9. submit() 提交表单
+
+10. target 用于发送和接受请求的窗口名称
+
+
+获取表单元素的方式很多，可以利用操作dom元素的方式或者利用name属性
+
+
+### 提交表单
+
+可以通过在input标签button标签设置type为submit来提交表单，或者在设置为image都能提交表单，这种方式就是可以提交表单之前会触发submit事件，这样的话就给了我们机会去验证表单数据的正确性，另外还可以在这个事件里取消这个事件的提交，调用e.preventDefault() 
+
+
+当然也可以在js代码中提交表单，那就是调用form.submit()方法，但是要注意这个方法的问题在于不会再触发submit事件了，所以对表单的校验要注意
+
+
+还有一个问题就是重复提交表单的问题，一般的处理方式就是第一次提交表单后禁用表单，或者在submit事件中取消提交
+
+
+### 重置表单
+
+通过为input或者button标签的type字段设置成reset值时就可以重置表单，同样这样的重置表单会触发reset事件，我们可以在这个事件里做一些取消重置的操作
+
+另外一种的方式就是调用js的表单的reset() 方法也可以重置表单事件
+
+**注意了： 与submit不一样，当调用js的reset方法时也会触发表单的reset事件的**
+
+### 表单字段
+
+可以像访问其他元素一样去访问表单元素
+
+每个表单元素都有一个elements属性，这个属性里面包含着一个有序列表，访问具体的表单字段可以通过位置或者name特性来访问
+
+```
+
+const form = document.getElementById('form1')
+
+const field1 = form.elements[0]
+
+const field2 = form.elements['txtbox1]
+
+const fieldLength = form.elements.length
+```
+
+### 表单的共有的字段属性
+
+除了fieldset元素之外，其他所有的表单元素都具有相同一组属性
+
+1. disabled 是否禁用
+
+2. form 指向当前字段所属的表单的引用
+
+3. name 当前字段的名称
+
+4. readOnly 表示当前字段是否只读
+
+5. tabIndex 表示当前字段的tab序号
+
+6. type 当前字段的类型
+
+7. value 当前字段提交到服务器的值
+
+**除了form属性之外，其他属性都可以用js动态修改**
+
+
+### 表单共有的方法
+
+每一个表单字段都拥有这俩个方法
+
+#### focus() 获取焦点
+
+在任何一个表单元素上调用focus方法都会使这个表单元素获得焦点，**如果这个比表单元素type是hiddden或者设置css的display||visibility隐藏元素的话那么设置焦点就会报错，**
+
+
+还有一个autofocus属性，给表单设置了这个属性就不用单独设置focus方法了，***autofocus属性具有一定的兼容性，所有要想保证完全的方式应该做一定的兼容性处理***
+
+```
+<form>
+<input type="text" autofocus />
+<form>
+
+
+const input = document.forms[0].elemens[0]
+
+if (input.autofocus !== true) {
+    input.focus()
+}
+
+```
+
+
+#### blur()
+
+失去焦点
+
+
+### 共有的表单的字段事件
+
+blur事件： 失去焦点时触发这个事件
+
+change事件 **对于input和textarea元素在他们失去焦点且value值改变时触发，对于select元素在其选项改变时触发**
+
+focus事件 在获得焦点时触发
