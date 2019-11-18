@@ -3739,3 +3739,17 @@ blur事件： 失去焦点时触发这个事件
 change事件 **对于input和textarea元素在他们失去焦点且value值改变时触发，对于select元素在其选项改变时触发**
 
 focus事件 在获得焦点时触发
+
+
+### 文本框脚本
+
+有两种方式表现文本框，一种是input的单行文本框，一种是textarea的多行文本框
+
+input的size可以指定文本能够显示的字符数，maxlength特性可以指定文本框接受的最大字符数，value都可以显示文本的内容。
+
+推荐使用value属性直接设置文本框的内容
+
+
+#### 选择文本
+
+input & textarea 都支持select方法，用于选择文本框中的所有文本，与select方法对应的select事件 在选择了文本的时候会触发一个select事件
