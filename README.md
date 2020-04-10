@@ -3829,3 +3829,17 @@ clipboardData对象有三个方法。分别是getData setData clearData
 
 
 7. 禁用验证 通过设置novalidate属性可以告诉表单不进行验证 
+
+### 富文本编辑 所见即所得
+
+在网页中编辑内容 富文本编辑有两种方式开启
+
+1. 在页面中嵌入一个包含空白html页面的iframe。并同时设置iframe的designMode属性为on。这样的话整个文档就可以编辑 
+
+2. 使用contenteditable属性 这个属性可以设置到任何元素 设置了就可以编辑当前元素  tab切换可以找到他
+
+3. 可以通过execCommand方法调用富文本编辑的很多命令 比如让字体倾斜 改变颜色等等 
+
+4. 可以调用框架的getSelection() 方法来确定实际选择的文本
+
+5. 富文本不是表单  可以将iframe中的html拿出来交给表单然后提交 
