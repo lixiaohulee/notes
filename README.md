@@ -3843,3 +3843,70 @@ clipboardData对象有三个方法。分别是getData setData clearData
 4. 可以调用框架的getSelection() 方法来确定实际选择的文本
 
 5. 富文本不是表单  可以将iframe中的html拿出来交给表单然后提交 
+
+
+
+# 使用canvas绘图
+
+### 基本使用 
+
+* canvas元素可以指定width和height也可以在css中指定这个样式 元素之间的内容可以作为后备信息  当浏览器不支持canvas元素时就可以显示这个信息
+
+* 如果你想绘图 那么就必须取得canvas的上下文  首先是获取元素 然后调用getContext方法 这个方法传入2d就可以取得2d上下文  调用之前检测这个方法的存在是有必要的 
+
+* toDataURL()方法可以将绘制的图像转为图片 传入的参数MIME格式 默认生成的png图像 
+
+### 2D上下文 
+
+* 2D上下文可以绘制简单的2D图形 比如矩形 弧线 
+
+### 填充和描边
+
+2D绘图的基本操作就是描边和填充 fillStyle和strokeStyle两个方法可以任何格式的颜色值 表示填充的颜色和图形边界的颜色是什么
+
+* fillRect 绘制矩形 接受四个参数 x轴和y轴的坐标 矩形的宽和高 填充的颜色用fillStyle填充 
+
+* strokeRect 绘制的图形也是接受四个参数 跟上面的一样 但是它绘制的图形是描边的 颜色就是strokeStyle来制定的 
+
+* 线条的宽度是有lineWidth属性控制的 他的值是一个整数。
+
+* lineCap属性可以线条的末端是什么形状 butt平头 round圆头。square方头 
+
+* lineJoin属性可以控制线条相交的形式 圆交round。斜交bevel 和斜接miter
+
+* clearRect方法还是接受四个参数。
+
+### 绘制路径 
+
+* arc(x,y,radius,startAngle,endAngle,conterclockwise) 以x y 为圆心绘制一条弧线 弧线半径为radius 起始角度为startAngle 结束角度为endAngle最后一个参数表示是否按逆时针方向计算 
+
+* arcTo(x,y,x1,y1,radius) 从上一点开始绘制一条弧线 到(x2,y2)为止 并以radius为半径
+
+* bezierCurveTo(c1x,c1y,c2x,c2y,x,y) 从上一点开始绘制一条曲线。到x y为止 并且以c1x c1y。c2x c2y为控制点。
+
+* lineTo(x, y) 从上一点开始绘制一条直线 到x y 为止 
+
+* moveTo(x, y) 将绘图游标移动到x y 不画线。
+
+* quadraticCurveTo(cx cy x y) 从上一点开始绘制一条二次曲线 到x y为止 并且以cx cy为控制点 
+
+* rect(x,y,width,height) 从点x y 开始绘制一个矩形。宽度和高度分别为width height指定  这个绘制的矩形路径而不是上面的fillRect绘制的独立的图形 
+
+* isPointInPath(x y) 用于确定这个点是否在路径上 
+
+
+### 绘制文本 
+
+* 绘制文本主要用fillText 和 strokeText两个方法 这俩个方法都接受4个参数 要绘制的文本字符串 x坐标和y坐标 还有可选的最大像素宽度 另外这两个方法都以下面三个属性为基础 
+
+1. font 文本的字重 大小和字体  context.font = 'bold 15px Arial'
+
+2. textAlign 表示文本的对齐方式 可能的值有start end。left right。和center  建议使用start和end 
+
+3. textBaseLine。表示文本的基线 可能的值有top hanging middle。alphabetic。ideographic 和bottom 
+
+
+**start表示文本左端的位置。end表示文本右端的位置  文字从左到右阅读  top表示y坐标是文字顶端 bottom表示y轴是文本底端**
+
+
+> measureText() 方法利用font textAlign和textBaseLine的当前值计算指定文本的大小 比如你想在一个140像素的矩形区域中绘制文本hello world 这个可以返回合适的大小
