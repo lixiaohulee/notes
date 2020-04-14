@@ -3910,3 +3910,48 @@ clipboardData对象有三个方法。分别是getData setData clearData
 
 
 > measureText() 方法利用font textAlign和textBaseLine的当前值计算指定文本的大小 比如你想在一个140像素的矩形区域中绘制文本hello world 这个可以返回合适的大小
+
+
+### 变换 
+
+* rotate(angle) 围绕原点旋转图像弧度 
+
+* scale(scaleX, scaleY) 缩放图像 在X轴方向乘以scaleX。在y轴方向scaleY
+
+* translate(x, y) 将坐标原点移动到x y。执行这个变换之后 坐标原点会变成x y
+
+* transform  直接修改矩阵
+
+* setTransform  将变换矩阵重置为默认状态 
+
+* save() 调用上下文的save方法可以将上下文中的设置 比如颜色等保存起来放到一个栈结构中 然后就可以重新设置属性了  等到想用之前的设置的时候就可以调用restore() 方法 这个方法可以将原先的设置出栈 就可以接着使用了 
+
+
+### 绘制图像
+
+调用drawImage()可以根据将一副图像绘制到画布上。根据期望的结果不同。可以在调用这个方法时传入不同的值 
+
+1.  context.drawImage(image,x, y). 传一个html image元素 x和y表示绘制的改图像起点的x和y轴坐标
+
+**这样设置的图像在画布上大小和原始大小一样 如果你想改变绘制后图像的大小 可以再多传两个参数 分别表示目标宽度和目标高度**
+
+2. context.drawImage(image, 30, 30, 30, 30)
+
+3. context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, targetX, targetY, targetWidth, targetHeight)
+
+上面这个方法可以将图像中一部分绘制到画布上  这个方法应该可以做个放大器的功能
+
+**除了给drawing方法传入一个img元素外 还可以传入一个canvas元素 注意： 图像不能来自其他域 不然会报错** 
+
+
+### 阴影 
+
+2D上下文会根据一下几个属性 自动为形状或者路径绘制出阴影 
+
+1. shadowColor 眼影颜色
+
+2. shadowOffsetX 形状或者路径X轴方向的偏移量 
+
+3. shadowOffsetY 形状或者路径y轴方向的偏移量 
+
+4. shadowBlur 模糊的像素值 
