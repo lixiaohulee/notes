@@ -3955,3 +3955,42 @@ clipboardData对象有三个方法。分别是getData setData clearData
 3. shadowOffsetY 形状或者路径y轴方向的偏移量 
 
 4. shadowBlur 模糊的像素值 
+
+
+### 渐变
+
+渐变是由CanvasGradient实例表示的 可以通过2D上下文来创建和修改 
+
+要创建一个线性的渐变可以使用createLinearGradient方法 这个方法接受四个参数分别表示起点的x坐标 y坐标 终点的x坐标和y坐标 
+
+addColorStop方法用来指定颜色 接受两个参数 第一个表示色标位置是一个0或者1
+第二个参数是css颜色值 
+
+```
+const gradient = context.createLinearGradient(30, 30, 70, 70)
+
+gradient.addColorStop(0, 'white')
+gradient.addColorStop(1, 'red')
+
+context.fillStyle = gradient
+
+context.fillRect(30, 30, 50, 50)
+```
+
+### 模式
+
+模式其实就是重复的图像 可以用来填充或者描边图形 创建一个新的模式就是用方法 createPattern()方法  传入两个参数。一个可以img元素或者video元素或者canvas元素 一个是参数的值与background-repeat属性值相同 表示如何重复图像
+
+### 使用图像数据
+
+2D上下文有个明显的长处就是可以通过getImageData()取得原始图像数据 这个方法接受四个参数 要取得其数据的画面区的x坐标和y坐标以及该区域的像素宽度和高度  
+
+取得左上角大小为50*50像素的区域图像数据 
+
+const imageData = context.getImageData(10, 5, 50, 50)
+
+返回的imageData的实例就是都有三个属性 width和height和data 其中data是一个数组 保存着图像中的每一个像素的数据 再data数组中 每一个像素的数据用四个元素来保存 分别表示红 绿和蓝和透明值 每个元素值都是0-255之间的数字  
+
+**能够访问图像数据 就能够修改图像数据**
+
+是
