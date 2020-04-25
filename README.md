@@ -4025,3 +4025,73 @@ const imageData = context.getImageData(10, 5, 50, 50)
 接收到信息后 会触发window对象的message事件。这个事件是以异步的形式触发的 
 
 message事件的事件对象有个data属性表示传递过来的数据 origin属性表表示发送信息的文档所在的域 source表示发送消息的文档所在的文档的window对象的代理 不完全等于window对象 发送消息的窗口对象 **可以通过这个代理对象来发送回执消息的**
+
+
+
+### 原生拖放 
+
+最早引入拖放功能的是IE4 起初能够只有图片和文本可以拖放  后来任何元素都可以拖放 其他浏览器也根据IE的实现支持了拖放功能 
+
+### 拖放事件 
+
+#### 发生在被拖动元素的身上的事件
+
+* dragstart 按下鼠标并开始拖动时会触发这个事件 此时鼠标的光标会变成不能放的状态 表示不能将自己拖放在自己上面
+
+* drag dragstart事件触发后 随即就会触发drag事件 而且元素被拖动期间会持续触发该事件
+
+* dragend 当拖动停止时无论是否将元素放在了有效的放置目标上还是放在了无效的放置目标上 都会触发dragend事件 
+
+
+#### 发生在放置目标的元素身上的事件
+
+* dragenter 只要有元素被拖放到目标元素上时就会触发这个事件
+
+* dragover  只要被拖动的元素还在放置目标的范围内移动时 就会持续触发该事件 如果元素被拖放除了目标元素该事件就不会再触发
+
+* dragleave 只要元素被拖放出了目标元素就会触发这个事件
+
+* drop 只要元素被放置在了目标元素中就会触发这个事件 
+
+
+#### 自定义放置目标元素
+
+被拖动的元素经过一些无效的放置目标时鼠标就会出现一种特殊的光标 圆圈中有个反斜线  表示不能放置
+
+**但是根据后来的规范  所有元素都是可以支持放置目标事件的 但是这些元素默认情况下不支持放置的 就是如果将拖放的元素经过不允许放置的元素 无论用户怎么操作都不会发生drop事件 不过你可以把任何元素变成有效的放置目标 方法就是重写dragenter  和dragover事件的默认行位**
+
+```
+<div id="box"></div>
+
+const box = document.getElementById('box')
+box.addEventListener('dragenter', e => {
+    e.preventDefault()
+}, false) 
+
+box.addEventListener('dragover', e => {
+    e.preventDefault()
+}, false)
+```
+> 经过测试 触发dragenter事件和dragleave时间的时间点就是当被拖动元素的一半身体进入或者离开可放置区域的时候才会触发  **dragover事件也是当元素自己的大小一半进入放置元素的时候就会触发**
+
+
+drop放置事件的默认行为就是打开目标元素上的url 所以一张图片的拖放就会打开图片的url
+
+
+#### dataTransfer对象 
+
+这个对象是由IE5引入的 用于在拖放事件中传递数据 有两个方法分别是getData 和 setData 这俩个方法刚开始支持参数text 或者 url 以表示传递的是text还是url。后来html5做了扩展 支持了各种MIME类型 text => text ||Text（firefox） url => url || text/url-list
+
+```
+const dataTransfer = e.dataTransfer
+
+const url = dataTransfer.getData('url') || dataTransfer.getData('text/url-list')
+
+const text = dataTransfer.getData('Text')
+
+```
+
+> 当在浏览器中拖动文本时候浏览器就会调用setData方法 并text的形式保存 当拖动url的时候就会以url的形式保存 将数据保存为url和text的形式是有区别的 当拖动一个url的时候放到一个浏览器窗口中就会打开这个url
+
+
+**你可以选择在dragstart的事件中设置数据 设置的数据只能在drop事件中读取**
