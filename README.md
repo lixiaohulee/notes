@@ -4095,3 +4095,54 @@ const text = dataTransfer.getData('Text')
 
 
 **你可以选择在dragstart的事件中设置数据 设置的数据只能在drop事件中读取**
+
+
+dropEffect 和 effectAllowed
+
+这两个是dataTransfer对象的属性 可以用来确定被拖动的元素和放置目标的元素能够接受什么操作 
+
+**dropEffect属性可以知道被拖动的元素能够执行那种放置行为 这个属性有下列四个可能的值**
+
+* none 不能把拖放的元素放到这里 这是除文本框之外的所有的元素的默认值 
+
+* move 应该把拖动的元素移动到放置目标
+
+* copy 应该把拖动的元素复制到放置目标
+
+* link 表示放置目标会打开拖动的元素 但是拖动的元素必须有个url
+
+**要想设置dropEffect属性 必须在ondragenter事件处理中设置**
+
+**effectAllowed属性表示允许拖动元素的哪种dropEffect 只有这俩个搭配使用才会有效**
+
+* uninitialized 没有给拖动的元素设置任何放置行为
+
+* none 被拖动的元素不能有任何行为
+
+* copy 只允许值为copy的dropEffect
+
+* link 只允许值link的
+
+* move
+
+* copyLink
+
+* copyMove
+
+* linkMove
+
+* all
+
+
+#### 可拖动
+
+默认情况下图像和链接和文本是可以拖动的 html5为所有元素新增了一个draggble属性 表示元素是否可以拖动 除了图像和链接其他元素的这个属性设置都是false。
+
+
+#### 其他成员
+
+* addElment
+
+* clearData
+
+* setDragImage
