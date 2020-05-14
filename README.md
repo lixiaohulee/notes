@@ -4146,3 +4146,113 @@ dropEffect 和 effectAllowed
 * clearData
 
 * setDragImage
+
+
+### 媒体元素
+
+HTML5新增了两个媒体元素 就是video和audio元素 因为浏览器支持的媒体格式不一样  所以通过下列方式指定多个来源是必要的
+
+```
+<video>
+    <source srac="song.mp4" type="video/mp4">
+    <source srac="song.ogv" type="video/ogv">
+    <source srac="song.webm" type="video/webm">
+    video player not available
+</video>
+```
+
+不通的浏览器的编码格式是不通的 
+
+
+#### 媒体元素的属性
+
+| 属性 | 数据类型 | 说明 |
+| ---- | --- | --- |
+| buffered | 时间范围 | 表示已经下载的缓冲的时间范围的对象 | 
+|bufferedBytes | 字节范围 | 已经下载的缓冲的字节范围的对象 |
+|bufferingRate | 整数 | 下载过程中每秒平均接受的位数 | 
+| currentLoop | 整数 | 表示当前已经循环的次数 |
+| readyState | 整数 | 视频的播放状态 | 
+
+#### 事件
+
+| 事件 | 触发时机 |
+| --- | --- |
+| abort | 下载中断 | 
+| canplay |可以播放时触发的事件 此时playState的值为2 |
+| dataunavailable |当前帧已经下载完成  readySate的值为1 |
+| emptied | 网络链接关闭 | 
+| empty | 发生错误阻止了媒体下载 | 
+| progress | 媒体正在下载|
+| waiting | 播放暂停 等待下载更多数据 | 
+| timeupdate | currentTime被以不合理或者意外的方式更新 |
+| stalled | 浏览器尝试下载 但是未收到数据 | 
+| ratechange |播放速度改变了| 
+| playing|媒体已实际开始播放 | 
+| play | 媒体已经接受到指令开始播放 |
+| loadStart | 下载已经开始 | 
+| loadedmetadata | 媒体的元数据已经下载完成 | 
+| loadeddata | 媒体的第一帧已经下载完成|
+| durationchange | duration属性的改变 |
+
+
+> 以上的属性和事件列表只是列举了很多不常看见但是确实在开发播放器的时候非常当重要的属性和事件 
+
+#### 开发自定义播放器
+
+可以通过调用元素的play 或者pause等方法都可以用来自定义播放器 
+
+
+#### 检测编解码器的支持的情况
+
+并非所有的浏览器都支持视频和音频的播放格式 但是有一个方法可以用来检测浏览器是否支持这种格式 
+
+```
+video.canPlayType()
+```
+
+这个方法接受一种格式/编解码器字符串 返回的值有 probably maybe 或者空字符串
+
+```
+if (video.canPlaytype('video/mp4')) {
+    handle
+}
+```
+
+
+> 如果只给这个方法传递了一种MIME格式字符串 值可能是maybe或者空字符串 但是如果传递了MIME格式字符串同时还传递了编解码器的情况下返回的值就是probably 或者空字符串了
+
+已知的得到支持的格式和编辑码器的格式
+
+| 音频视频 | 字符串 | 支持的浏览器 |
+| ---- | ----- | ---- |
+| AAC | audio/mp4 codecs="mp4a.40.3" | IE9+ |
+| MP3 | audio/mpeg | IE9+ |
+| Vobis | audio/ogg codees="vorbis" |
+| WAV | audio/wav codecs="1" |
+| H.264 | video/mp4 |
+| Theora | video/ogg |
+| WebM | video/webm |
+
+
+### Audieo类型
+
+audio元素还有一个原生的JS构造函数 就想Image元素一样的 可以创建了这个元素不用插入到DOM中然后指定下载的文件同时下载完成后就可以调用play方法播放音频 
+
+
+### 历史状态管理 
+
+历史状态管理是现代web应用开发中的一个难点 用户的每次操作不一定会打开一个新的页面 因此后退和前进的按钮也就失去了作用 
+
+通过hashchange事件可以知道url什么时候发生了变化 即什么时候该有所反应
+
+**能够在不加载新页面的情况下改变url就可以使用history对象的pushState方法 这个方法接受三个参数 状态对象 新状态的标题  和可选的相对url**
+
+执行了这个方法后 新的状态信息就会加入到历史状态栈中 浏览器的地址栏也会变成新的地址 但是浏览器不会真的向服务器发送请求 即使查询locatio.href 也会返回与地址栏中相同的地址 调用pushState方法后 因为历史状态栈中有了新的状态 所以你会发现前进和后退按钮也能用了 
+
+**按下前进和后退按钮就会触发popState事件 这个事件的事件对象有个属性叫做state 这个state的值就是当初第一个传递给pushState方法的值**
+
+调用replaceState方法 这个方法传入的参数和pushState方法接受的参数一样 但是它不会在历史状态中创建新的状态 只会重写当前状态
+
+
+> 在使用HTML5的状态管理机制时 请确保pushState创造的每一个假的URL在web服务器上都有一个真的 否则在单击刷新按钮的时候就会出现404 
