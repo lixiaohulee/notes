@@ -4256,3 +4256,42 @@ audio元素还有一个原生的JS构造函数 就想Image元素一样的 可以
 
 
 > 在使用HTML5的状态管理机制时 请确保pushState创造的每一个假的URL在web服务器上都有一个真的 否则在单击刷新按钮的时候就会出现404 
+
+
+# 错误处理与调试
+
+
+### try-catch语句
+
+ECMA-262第三版引入了try-catch语句 我们应该把**可能会抛出错误的代码都放在 try语句块 而把那些用于处理错误的代码放在catch块中**
+
+如果try中的任何代码发生了错误 **就会立即退出代码执行过程 然后接着执行catch块中的代码  此时catch块中都会接受到一个包含错误信息的对象 即使你不想使用这个错误对象 也得给它起个名字 这个对象包含的具体因为浏览器的不同而不同 但是共同的是他们都包含一个message属性 还有一个name属性**
+
+**错误对象的message属性是唯一的能保证在所有浏览器中都支持的属性**
+
+```
+try {
+    //可能会导致错误的代码
+} catch(error) {
+    //在错误发生时怎么处理
+}
+```
+
+### finally子句
+
+虽然在try catch语句中时可选的 但是finally子句一经使用 其中包含的代码无论如何都会执行 **即使try catch中的代码都正常执行 即使try catch中的代码都已经return了代码**
+
+```
+function finally() {
+    try {
+        return 1
+    }catch(error) {
+        return 2
+    }finally {
+        reutrn 0
+    }
+}
+
+// return 0
+```
+上面的代码每一条语句都包含了return语句 表面上看会直接return 1 但是会返回0 因为当有了finally语句块的时候 就会导致该return语句被忽略掉 
