@@ -4295,3 +4295,65 @@ function finally() {
 // return 0
 ```
 上面的代码每一条语句都包含了return语句 表面上看会直接return 1 但是会返回0 因为当有了finally语句块的时候 就会导致该return语句被忽略掉 
+
+
+
+
+### 错误类型
+
+* Error 基类型 其他错误类型都继承于这个类型 很少会遇到这个错误类型 有的话也会是浏览器抛出的  这个类型主要是提供给开发人员来定制错误类型的
+
+* EvalError 使用eval函数时抛出的错误 
+
+* RangeError 数值超出相应的范围的时候就会抛出的错误 
+
+* TypeError 类型错误 在变量中保存意外的类型时或者
+
+* encodeURI 和 decodeURI 方法传入的URI格式不正确时就会抛出这个错误 
+
+**可以在try catch语句块中 使用instranceof操作符来识别抛出的错误具体是什么类型错误**
+
+```
+try {
+    someFunction()
+}catch(error) {
+    if (error instanceof TypeError) {
+        handle
+    }else if (error instanceof ReferenceError) {
+       handle
+    }
+}
+```
+
+try catch语句中发生错误时 浏览器就会认为现在错误已经处理了 所以不会再向外抛出错误了 因此也不会中断js代码的执行 但是我们不能滥用try catch 
+**try catch 最适合处理那些我们无法预知和控制的错误 假设你现在在使用一个大型的js库 这个库中可能会有意无意的抛出错误 由于我们不能修改库中的代码 因为使用try catch来捕获错误并进行相应的处理是最合适的 但是如果在明白的知道自己的代码会发生错误时还用try catch来处理代码。这是不合适的 比如说传递函数的参数是字符串而不是数字导致了错误 这样的情况下就不应该使用try catch语句块来实现 而是直接使用类型检查判断在函数中**
+
+
+### 抛出错误 
+
+throw操作符用来随时抛出自定义的错误 必须给这个操作符指定一个值 这个值的类型没有限制。**在遇到throw操作符时 浏览器会立即停止执行 当且仅当有try catch语句捕获到被抛出的错误时 代码才会继续执行**
+
+抛出错误的时机 应该是在出现某种特定的已知的错误条件出现的时候 导致函数无法正常执行的时候抛出错误 
+
+### 错误事件
+
+任何通过try catch处理的错误都会触发window对象的error事件 这个事件浏览器最早执行的事件之一 这个事件不会接受一个event对象而是接受错误信息 url和行号
+
+```
+window.onerror = function(message, url, line) {
+    console.log(message)
+}
+```
+
+**只要错误发生 无论是不是浏览器生成的 都会触发error事件 并执行这个事件处理程序 然后浏览器默认的机制就会发挥作用**
+
+如果在这个事件处理程序中返回false就会阻止浏览器报告错误的默认行为  相当于try catch语句 
+
+```
+window.onerror = function(message, url, line) {
+    alert(message)
+    return false
+}
+```
+
+图像也会支持error事件 只要图像特性中的url不能返回可以被识别的格式的图像。就会触发error事件 此时的error事件遵循dom格式  机会返回一个以图像为目标的event对象
