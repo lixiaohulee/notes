@@ -4357,3 +4357,217 @@ window.onerror = function(message, url, line) {
 ```
 
 图像也会支持error事件 只要图像特性中的url不能返回可以被识别的格式的图像。就会触发error事件 此时的error事件遵循dom格式  机会返回一个以图像为目标的event对象
+
+
+**发生error事件时 图像下载过程已经结束 也就是说不能再重新下载了**
+
+
+
+### 常见的错误类型
+
+* 类型转化错误
+
+* 数据类型错误
+
+* 通信错误 
+
+
+### 区分非致命错误和致命错误 
+
+可以通过一下手段区分致命错误和非致命错误 
+
+不影响用户的主要任务 只影响页面的一部分 可以恢复 重复相同操作可以消除错误
+
+**记住： 对于这些非致命错误不能打断整个程序的运行 进而阻止用户使用**
+
+
+致命错误可以通过下列的条件判定
+
+应用程序根本无法进行 错误明显影响了用户的主要操作  会导致其他连带错误 
+
+
+### 把错误记录到服务器
+
+### 调试技术
+
+* 记录到控制台 
+
+* 在JavaScript中运行java代码 如果配置合理 
+
+```
+java.lang.System.out.println('your message')
+```
+就可以在java的控制台中打印出来信息
+
+> 记录错误信息使用alert方法是不太可取的 因此这个方法回中断程序的运行
+
+* 将信息记录到当前页面 这种方式就是在当前页面开辟一个区域专门用来展示错误信息
+
+* 抛出错误 如果错误信息很具体 基本上就可以把它当作确定信息来源的依据 
+
+
+### IE的一些错误 
+
+
+# JavaScript与XML
+
+# E4X
+
+# JSON
+
+> JSON是一种数据结构 并不只是从属于JavaScript 而且不只是JavaScript才使用json
+
+### 语法
+
+1. json的数据值有三种 第一种就是简单值 简单值包括数字 字符串 布尔值和null **但是json不支持undefined同时如果表示字符串必须是双引号 如果是单引号就会报语法错误** 5、 ‘hello world’等都是
+
+2. 对象 json中的对象和JavaScript中的对象字面亮有所不同
+
+```
+//JavaScript对象
+var person = {
+    name: 'lixiaohu'
+    age: 34
+}
+
+
+//JSON
+var object = {
+    "name": "lixiaohu",
+    "age": 44
+}
+``` 
+
+**json对象和JavaScript字面量相比 json没有申明变量的概念 还有对象的属性必须使用双引号 当然这里注意js对象的字面量中的属性其实也是可以设置为双引号的 json对象是没有末尾分号的 **
+
+3. 数组。json数组采用的就是JavaScript中的数组字面量形式。
+
+
+
+### 解析和序列化
+
+#### JSON.stringify() 
+除了要序列化的JavaScript对象外 还可以接受另外两个参数 这俩个参数用于指定不同的方式序列化的对象 第一个参数是过滤器可以是函数或者数组 第二个参数表示是否在JSON字符串中保留锁进
+
+```
+let book = {
+    "name": "lixiaohu",
+    "author": "lixiaohu",
+    "year": 3033
+}
+
+let jsonText = JSON.stringify(book, ['name', 'author'])
+
+只会返回name和author
+```
+
+> 如果有个属性的值为undefined 那么这个属性在序列化的时候就会被忽略掉
+
+```
+var book = {
+     "title": "a",
+     "author": "b"
+}
+
+var jsonText = JSON.stringify(book, function(key, value) {
+    swtich(key) {
+        case "title":
+            return undefined
+        case "author": 
+            return 'c'
+            
+        default: 
+            return value
+    }
+})
+```
+
+#### 字符串锁进
+
+```
+var book = {
+    "title": "a"
+}
+var jsonText = JSON.stringify(book, null, 4)
+
+这里的第三个参数也可以是字符串 那么缩进就是字符串了
+```
+
+#### JSON.parse()
+
+# Ajax与Comet
+
+2005年ajax技术首次被正式提出 这一技术用来向服务器请求数据而无需刷新页面 
+
+他的核心技术是XMLHttpRequest对象 这是由微软首次引入的一个特性 其他浏览器都提供了相同的实现 Ajax是对Asynchronous Javascript + XML的简写
+
+
+### XMLHttpRequest对象 
+
+IE5是第一款引入XHR对象的浏览器  在IE5中XHR对象通过MSXML库中的一个ActiveX对象实现的 所以在在IE中可能会遇到三种不同版本的XHR对象 IE7+开始直接引入了XMLHttpRequest对象 
+
+
+### XHR的用法
+
+使用XHR的时候 要调用的第一个方法就是open方法 这个方法接受三个参数 
+要发送的类型  请求的URL 表示是否异步发送请求的布尔值
+
+	xhr.open('get', 'example.php', false)
+	
+这段代码首先第一段url相对于执行代码的当前页面 open方法并不会真正的发送请求 只是启动一个请求以备发送 
+
+**要发送指定的请求 必须像下面这样调用send方法** 
+
+send方法接受一个参数 即要作为请求主体发送的数据  如果不需要发送数据 则必须传入null 调用send方法之后请求就会分派到服务器 
+
+```
+xhr.open('get', 'example.php', false)
+xhr.send(null)
+```
+
+上面这段代码是同步请求数据的 那么就会等到从服务器拿到数据之后才能执行后面的代码 在收到服务器的响应后 响应的数据会自动填充到XHR对象的对应的属性中去 
+
+responseText 作为响应主体被返回的文本 
+responseXML 如果响应的内容类型是text/xml 或者 application/xml 这个属性中将保存着响应数据xml dom文档 
+status响应的http状态码
+statusText http状态的说明 
+
+收到响应之后 应该检查status属性 以确定相应已经成功返回 一般来说 可以将http状态码为200作为成功的标志 
+
+```
+x.open('get', 'example.php', fasle)
+xhr.send(null)
+
+if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304){
+    console.log(xhr.responseText)
+}else {
+    console.log(xhr.status)
+}
+```
+
+像上面这样发送同步请求当然没有问题 但是多数情况下 我们要发送异步请求 才能让JavaScript继续执行而不必等待相应 此时必须检测XHR对象的readyState属性 改属性表示请求/响应当前活动阶段 这个属性的值如下 
+
+0  未初始化。尚未调用open方法 
+1  启动 已经调用open方法 但尚未调用send方法
+2  发送 已经调用send方法 但尚未收到响应 
+3  接收 已经收到部分响应数据 
+4  完成 已经接收到全部响应数据 而且已经可以在客户端中使用了 
+
+**readyState属性的值变化 会触发一次readystatechange事件 可以利用这个事件来检测每次状态变化后readyState的值 通常readyState值为4阶段表示数据应就绪。可以访问了**
+
+> 必须在调用open方法之前指定onreadystatechange事件处理程序
+
+```
+var xhr = createXHR()
+xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+        if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
+            console.log(xhr.responseText)
+        }else {
+            console.log(xhr.status)
+        }
+    }
+}
+xhr.open('get', 'example.txt', true)
+xhr.send(null)
+```
