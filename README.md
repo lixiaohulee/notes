@@ -4571,3 +4571,60 @@ xhr.onreadystatechange = function() {
 xhr.open('get', 'example.txt', true)
 xhr.send(null)
 ```
+
+
+#### HTTP头部信息
+
+默认情况下 在发送XHR请求的同时 还会发送下列头部信息
+
+1. Accept: 浏览器能够处理的内容类型
+2. Accept-Charset 浏览器能够显示的字符集
+3. Accept-Language 浏览器当前设置的语言 
+4. Connection 浏览器与服务器之间的连接的类型 
+5. Cookie 当前页面的设置的任何Cookie
+6. Host 当前页面所在的域
+7. Referer 发送请求的页面的URI **这个字段拼写错了**
+8. User-Agent 浏览器的用户代理字符串 
+
+> 虽然不同浏览器实际发送的头部信息会有所不同 但以上列出的基本上都是浏览器回发送的 
+
+
+#### setRequestHeader()
+
+这个方法可以设置自定义的请求头部信息字段  它接受两个参数 头部字段的名称和头部字段的值 **要成功发送请求头部信息 必须在调用这个方法之后且调用send方法之钱调用这个方法**
+
+```
+let xhr = createXHR()
+xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+        if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
+            alert(xhr.responseText)
+        }else {
+            alert(xhr.status)
+        }
+    }
+}
+xhr.open('get', 'example.com', true)
+xhr.setRequestHeader('myHeader', 'myValue')
+xhr.send(null)
+``` 
+> 服务器在接受到这种自定义的头部信息之后 可以执行相应的后续操作 我们建议读者使用自定的头部字段 不要使用浏览器正常发送的字段 否则可能会影响服务器的响应，有的浏览器允许开发人员重写默认的头部信息 有的浏览器则不允许这样做 
+
+
+#### getResponseHeader() getAllResponseHeaders()
+
+上面这俩个方法都可以获取请求响应的头部信息 前者是获取指定字段的头部信息。后者则是获取所有的头部信息  
+
+
+#### get请求 
+
+get请求最常见 常用于向服务器查询某些信息 必要时可以将查询字符串追加到URL的末尾 以便将信息发送到服务器 对XHR而言 位于传入open方法的url末尾的查询参数必须经过正确的编码才行  
+
+**每个参数的名称和值都必须使用encodeURIComponent进行编码 然后才能放到URL的末尾 而且所有名值对必须由&号分隔**
+
+
+#### post请求 
+
+post请求一般用于向服务器发送应该被保存的数据 post请求应该把数据作为请求的主体提交 post请求可以包含非常多的数据 而且格式不限 
+
+**在send方法中传入某些数据 由于XHR的设计主要是为了处理XML 因此可以传入XML DOM文档 传入的文档经过序列化之后将作为请求主体被提交到服务器 当然也可以在此传入任何你想要传入的服务器的字符串**
