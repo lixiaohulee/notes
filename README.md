@@ -4628,3 +4628,139 @@ get请求最常见 常用于向服务器查询某些信息 必要时可以将查
 post请求一般用于向服务器发送应该被保存的数据 post请求应该把数据作为请求的主体提交 post请求可以包含非常多的数据 而且格式不限 
 
 **在send方法中传入某些数据 由于XHR的设计主要是为了处理XML 因此可以传入XML DOM文档 传入的文档经过序列化之后将作为请求主体被提交到服务器 当然也可以在此传入任何你想要传入的服务器的字符串**
+
+
+### XMLHttpRequest 2级
+
+#### FormData
+
+formData类型为序列化表单数据，创建和表单数据一样的数据 
+
+```
+let data = new FormData()
+data.append('name', 'lixiaohu')
+
+创建一个formdata对象 并向其中添加一些数据 
+```
+
+也可以直接将表单元素传入formdata构造函数 
+
+
+**创建了formdata的实例后 可以直接传给xhr的send方法**
+
+	xhr.send(new FormData(form))
+	
+> formData类型的方便之处在于不必明确在xhr对象上设置请求头 xhr对象能够识别的数据类型 
+
+
+#### 超时设定 
+
+IE8为XHR对象添加了一个timeout属性 表示请求回在等待响应多少毫秒之后就终止。就会触发timeout事件 进而调用ontimeout事件处理程序。**调用timeout处理程序 此时可能readystate的值已经为4了 这意味着回调用onreadystatechange事件 可以如果在请求终止之后再去访问status属性 那么就会导致错误 所以应该将访问status属性的代码放到try catch中**
+
+```
+let xhr = new XMLHttpRequest()
+
+xhr.onreadystatechange = function() {
+    if (xhr.readystate === 4) {
+        try {
+            if ((xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) {
+                 console.log(xhr.responseText)
+            }else {
+                console.log(xhr.status)
+            }catch(err) {
+            
+               //handle error ontimeout 
+            }
+        }
+    }
+} 
+xhr.open('get', 'timeout.php', true)
+xhr.timeout = 1000
+xhr.ontimeout = function() {
+    console.log()
+}
+xhr.send(null)
+```
+
+#### overrideMimeType()
+
+这个方法用于重写XHR响应的MIME类型 因为响应的返回的MIME类型决定了XHR如何处理它  
+
+xhr.overrideMimeType('text/xml')
+> 这个方法必须在send方法之前调用 才能保证重写MIME类型 
+
+
+#### 进度事件
+
+progress Events规范是W3C的类型一个工作 
+
+loadstart 类型是
+
+
+### 跨域资源共享
+
+CORS Cross-Origin Resource Sharing 是w3c的一个工作草案 定义了在必须访问跨域资源时 浏览器和服务器应该如何沟通 **这其中的原理和背后的思想就是：使用自定义的头部信息让浏览器和服务器沟通 从而决定时候成功还是失败**
+
+一个简单的请求get 或 post 或head其中一个方法 同时header头部信息中不能有自定义的字段 并且某些字段的值还有限制和要求 
+
+简单请求：
+只要同时满足以下两大条件，就属于简单请求。
+
+（1) 请求方法是以下三种方法之一：
+
+HEAD
+GET
+POST
+（2）HTTP的头信息不超出以下几种字段：
+
+Accept
+Accept-Language
+Content-Language
+Last-Event-ID
+Content-Type：只限于三个值application/x-www-form-urlencoded、multipart/form-data、text/plain
+
+这种简单请求就是为了适应表单 表单请求一般是可以直接发出跨域请求的  但是凡是不能满足上面条件的都是非简单请求 
+
+**简单请求一般是浏览器加上一个origin头部字段然后直接发出跨域请求  服务器根据这个字段的值决定允许请求还是不允许请求  不允许正常返回但是没有响应的头部信息。浏览器找不到响应的头部信就会跨域错误 允许则浏览器就会返回响应的跨域头部**
+
+非简单请求一般会先发一次预检请求options 预检通过了就会正式发起请求 
+
+> 预检请求返回之后 浏览器会缓存响应中指定的时间 在这个时间之内再次发送非简单请求就不会在预检了 
+
+
+#### JSONP 
+
+jsonp是利用script标签或者img标签的src属性不受跨域限制的特性 
+
+```
+function callbackFunc(data) {
+    console.log(data)
+}
+
+let url = http://example.com?callback=callBackFunc
+
+<script src="url"></script>
+
+---
+const callBackFunc = ctx.query.callback
+
+ctx.body = `callbackFunc({name:'ssdfsdf'})`
+```
+
+### web sockets
+
+要说最令人津津乐道的新浏览器api就是web sockets  他的目标就是建立一个单独的持久连接提供全双工的，双向通信  它使用的是自定义的通信协议wss://
+
+```
+const socket new WebSocket('ws://www.example.com/server.php')
+//实例化了websocket对象后 浏览器会马上尝试创建连接 
+
+socket.send('asfasfas')
+socket.onmessage = function(event) {
+    consoloe.log(event.data)
+}
+
+socket.close()
+socket.onerror = function() {}
+
+```
