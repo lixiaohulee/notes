@@ -4764,3 +4764,184 @@ socket.close()
 socket.onerror = function() {}
 
 ```
+
+
+# 高级技巧
+
+### 安全的类型检测
+
+js内置的类型检测并非完全可靠 比如typeof操作符和instanceof操作符都是不可靠的
+
+> 可以使用Object.prototype.toString方法来检测对象  这个方法总是返回一个'[Object NativeConstructorName]' 每个类都有个[[Class]]内部属性 这个属性中指定了上述字符串中构造函数名称
+
+
+### 作用域安全的构造函数
+
+```
+function Person(name, age) {
+    if (this instanceof Person) {
+         this.name = name
+         this.age = age
+    }else {
+        return new Person(name, age)
+    }
+  }
+```
+
+### 惰性载入函数
+
+当函数里面还有很多if条件语句判断的时候 如果每次执行这个函数都会调用大量的if判断 这样的话就会性能比较差 比较慢 惰性载入函数是在第一次执行的函数的根据一些条件的有无来更改函数体内容 从而使得以后再调用函数时少走弯路
+
+```
+function createXHR() {
+    if (typeof XMLHttpRequest !== 'undefined') {
+        return new XMLHttpRequest()
+    }else if (...) {
+       ...
+    }
+}
+
+
+function createXHR() {
+    if (typeof XMLHttpRequest !== 'undefined') {
+        createXHR = function () {
+          return new XMLHttpRequest()
+        }
+    }
+}
+```
+
+### 函数绑定
+
+函数绑定可以解决一些this丢失和调用错误的事情 可以在特定的环境中以指定的参数调用另一个函数 **要知道this的指向是谁调用this this指向谁**
+
+```
+var handler = {
+    message: 'event handled',
+    handleClick: function() {
+        console.log(this.message)
+    }
+}
+
+button.addEventListener('click', handler.handleClick, false)
+
+//这里触发事件时候 回调函数打印的是undefined 因为this指向了window对象
+```
+
+```
+button.addEventListener('click', function() {
+    handler.handleClick()
+}, false)
+```
+
+> 使用一个bind函数可以解决这个问题
+
+```
+function bind(fn, context) {
+    return function(...args) {
+        return fn.apply(context, args)
+    }
+} 
+```
+
+
+### 函数柯里化
+
+> 什么是函数柯里化
+
+柯里化湿currying的音译  是实现多参数函数的一个技术 它为实现多参数函数提供了一个递归降解的实现思路 **把接收多个参数的函数变换成接收一个单一参数的函数 并且返回接收雨下的参数而且返回结果的新函数**
+
+> 只传递给函数一部分参数来调用它  让它返回一个函数去处理剩余下的参数 
+
+
+>举个柯里化的例子
+
+```
+举个例子，你有一个商店 ，你想给你的顾客 10% 的折扣：
+function discount(prize, discount) {
+    return prize * discount
+}
+
+
+//以后每天我们开始这样计算
+const price = discount(1500,0.10); // $150
+// $1,500 - $150 = $1,350
+const price = discount(2000,0.10); // $200
+// $2,000 - $200 = $1,800
+const price = discount(50,0.10); // $5
+// $50 - $5 = $45
+const price = discount(5000,0.10); // $500
+// $5,000 - $500 = $4,500
+const price = discount(300,0.10); // $30
+// $300 - $30 = $270
+
+
+//当我么实现一个柯里化版本之后
+function discount(discount) {
+    return prize => {
+        return prize * discount
+    }
+}
+
+let tenPercentDiscount = discount(0.1)
+
+const prize = tentPercentDiscount(50) // 5 以后直接这么调用
+
+
+//假如有一天你想给某些用户打20@%的折扣 
+let twentyPercentDiscount = discount(0.2)
+const prize = twentyPercentDiscount(100) // 20
+```
+
+>柯里化函数中使用闭包和递归的 用不好可能会消耗性能
+
+### 防篡改对象 
+
+如果你不想让一个对象再被修改。那么你可以通过改变对象的内部属性[[Configura ble]] [[Writable]] [[Enumerable]] [[Value]] [[Get]] [[Set]]特性
+
+### 不可扩展对象 
+
+默认情况下 所有对象都是可以扩展的 也就是说 任何时候都可以向对象中添加属性和方法 通过调用Object.preventExtensions(person)可以让你不能再添加属性和方法
+
+```
+var person = { name: 'lixiaohu' }
+Object.preventExtensions(person)
+person.age = 33
+
+console.log(person.age). //undefined
+
+//严格模式下如果对不可扩展对象添加属性会报错
+//但是对于已经有的属性不受影响 可以改可以删除
+```
+
+> Object.isExensible 判断对象是能扩展的 
+
+### 密封对象
+
+**蜜蜂对象既不能扩展添加属性也不能修改删除属性和方法且不能转化为防问器属性**
+
+> 密封对象调用Object.seal()方法设置
+
+```
+var person = { name: 'lee' }
+Object.seal(person)
+
+person.age = 34
+console.log(person.age) //undefined
+
+delete person.name 
+// person.name => lee
+```
+这里删除属性和添加属性的操作都忽略了 严格模式下这样做会报错
+
+> Object.isSealed() 方法确定对象是否被密封了 
+
+### 冻结的对象 
+
+最严格的防篡改级别就是冻结对象了 被冻结的对象既不能扩展而且是密封的。并且对象内部属性的[[特性会被设置为]] false **如果定义了[[Set]]函数 访问器属性仍然是可写的**
+
+> 冻结对象是Object.fressze()方法 可以用来冻结对象
+
+严格模式还是会报错
+
+> Object.isFrozen() 判断对象是否冻结
