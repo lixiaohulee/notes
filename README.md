@@ -4945,3 +4945,132 @@ delete person.name
 严格模式还是会报错
 
 > Object.isFrozen() 判断对象是否冻结
+
+
+### 高级定时器 
+
+关于定时器的要记住的最重要的事情就是：指定的时间间隔表示何时将定时器中的代码加到任务队列而不是何时实际执行代码 定时器中的代码至少要等到定时器设置的时间之后才会执行 队列中的所有代码都要等到JavaScript进程空闲之后才能执行。而不管他们是符合添加到队列中的
+
+### 重复定时器 
+
+setInterval 方法确保了定时器中的代码规则的插入到队列中 **但是这个方式的问题在于定时器中的代码可能在再次被添加到队列之前还没有完成执行 结果就导致了定时器代码连续执行了好几次而之间没有任何停顿**
+
+> 幸好JavaScript引擎够聪明 能避免这个问题 当使用了重复定时器的时候 当且仅当没有该定时器的任何其他代码实例时 才会将定时器代码添加到队列中 这就确保了加入到队列中的代码的最小时间间隔为指定间隔
+
+#### 重复定时器的规则有两个问题
+
+1. 某些间隔会被跳过
+
+2. 多个定时代码执行之间的间隔可能会比预期的要小
+
+为了解决重复定时器的问题 可以使用setTimeout来代替 
+
+```
+setTimeout(function() {
+    //代码逻辑处理中
+    setTimeout(arguments.callee, 1000)
+}, 1000)
+```
+
+### 数组分块技术
+
+JavaScript在浏览器中的运行。是被分配了一定的资源 它被严格限制了 因为这样能防止web程序直接把机器搞挂了 
+
+> 脚本长时间的运行一般有两个原因： 一是过深的嵌套函数调用 二是运行大量的循环 
+
+当脚本运行的时间超过浏览器的限制时间时会报错 脚本的运行是阻塞的 如果这种长时间的运行会导致用户等待和卡顿 
+
+对于大量的循环问题可以考虑使用数组分块技术来优化 从而给予其他任务处理的时间 不至于因为这个循环导致其他任务停掉 
+
+```
+setTimeout(function() {
+    var item = array.shift()
+    process(item)
+    
+    if (array.length > 0) {
+        setTimeout(arguments.callee, 100)
+    }
+})
+
+
+function chunk(array, process, context) {
+
+    setTimeout(function() {
+        var item = array.shift()
+        process.call(context, item)
+        
+        if (array.length > 0) {
+        
+            setTimeout(argument.callee, 100)
+        }
+    }, 100)
+}
+```
+
+### 防抖和节流 
+
+红宝书这里对于节流的定义应该是有问题的 它将防抖定义成了节流 
+
+> 但是查了一下 有的人说防抖和节流都数据节流 只不过他们俩有些微的差别
+
+节流
+
+```
+function throttle(func, delay) {
+    if (typeof func !== 'function' || typeof delay !== 'number') {
+        throw new TypeError('arguments type error')
+    }
+    
+    let lastInvokeTime = 0
+    
+    return function(...args) {
+        let curTime = new Date().getTime()
+        if (curTime - lastInvokeTime <= delay) {
+            return 
+        }
+        
+        func.apply(this, args)
+        lastInvokeTime = curTime
+    }
+}
+
+
+function throttle(func, delay) {
+    if (typeof func !== 'function' || typeof delay !== 'number') {
+        throw new TypeError('arguments type error')
+    }
+    
+    let canRun = true
+    return function(...args) {
+        if (!canRun) return
+        canRun = false 
+        let that = this
+        const timer = setTimeout(function() {
+            func.apply(that, args)
+            canRun = true
+            clearTimeout(timer)
+        }, delay)
+    }
+}
+```
+
+
+防抖
+
+```
+function debounce(func, delay) {
+    if (typeof func !== 'function' || typeof delay !== 'number') {
+        throw new TypeError('arguments type error')
+    }
+    
+    let timer = null
+    
+    return function(...args) {
+        clearTimeout(timer)
+        let that = this
+        timer = setTimeout(() => {
+            rerturn func.apply(that, args)
+        }, delay)
+    }
+}
+```
