@@ -5074,3 +5074,264 @@ function debounce(func, delay) {
     }
 }
 ```
+
+
+# 离线应用和客户端存储
+
+### 离线检测 
+
+1. navigator.onLine 属性来判断设备处于离线还是在线状态 不过这个属性在不同的浏览器上的表现不一致 所以有一定的兼容性 
+
+2. online和offline事件 HTML5定义了两个事件 设备在离线和在线之间切换时会触发这俩个事件 
+
+```
+if (navigator.onLine) {
+    //online status
+}else {
+    //offline status
+}
+
+
+window.addEventListener('Online', function(){}, false)
+window.addEventListener('Offline', function(){}, false)
+```
+
+### 应用缓存 
+
+Appcache就是从浏览器缓存中分出来的一块缓存区 想要在这个缓存区中保存数据可以使用一个描述文件 列出下载和缓存的资源 
+
+```
+描述文件
+
+CACHE MANIFEST
+
+#comment
+
+file.js
+file.css
+
+```
+> 在上面这个文件中列出的都是需要下载的资源这些资源都是备离线时使用 
+
+将这个描述文件与页面关联起来 就得在<html>标签中指定 
+
+```
+<html manifest="/offline.manifest">
+```
+
+有相应的jsapi appcationCache对象确保你来知道他在做什么 这个对象挂在window对象上 这个对象有很多属性和方法  
+
+其中update方法手动触发更新缓存 swapCache()启用缓存 
+
+### Cookie
+
+* 统一域名下面存储的cookie数量是有一定限制的 每个浏览器的具体数量不一样 又的可能是20个 有的可能是50个 因浏览器而异 
+
+* 当超过浏览器的cookie数量的限制的时候 一般会根据具体的策略清除之前的cookie从而给现在的cookie腾出位置 
+
+* cookie的大小也有限制 一般都为4096B  当尝试设置过大的cookie的时候会被忽略的
+
+
+### cookie的构成 
+
+名称  值 域名 路径 失效时间 安全标志 
+
+> 过了失效时间cookie会被删除掉的 
+
+
+### sesstionStorage和localStorage
+
+#### 相同点
+
+1. 存储大小一般为5M左右 cookie存储大小为4KB
+
+2. 都有同源策略限制 跨域无法访问
+
+3. 数据都只是存储在客户端 并不参与服务端的通信 
+
+4. 都是以key value的形式存储的 value必须是字符串 
+
+
+#### 不同点 
+
+1. localStorage的数据存储是永久性的 除非用户手动删除 
+
+2. sesstionStorage存储的数据在当前回话中结束时就会自动清除掉 就是浏览器的当前tab标签页面关闭时删除 
+
+3. localStorage受同浏览器 同源策略限制 
+
+4. sesstionStorage受同浏览器 同源策略限制 同标签页限制 
+
+
+> 其实在localStorage时globalStorage的进化版本 globalStorage在设置的时候必须指定好哪个域名能够访问它 而从html5开始 localStorage代替了这个问题 
+
+
+### indexedDB
+
+本地数据库
+
+
+# 最佳实践 
+
+### 可维护性
+
+* 可理解性 其他人接受代码 不用解释 一看就明白
+* 直观性 代码中的东西一看就明白 无论多么复杂 
+* 可适应性 代码以一种数据上的变化不要求完全重写的方法撰写 
+* 可扩展性 在代码架构上已经考虑了在未来允许对核心功能进行扩展 
+* 可调试性 当有地方出错时 代码可以给予你足够的信息尽可能的直接确定问题的所在 
+
+### 代码约定 
+
+* 建议使用四个空格缩进 不要使用制表符 因为这在不同的编辑器上显示效果不同
+
+* 函数和方法必须有注释 表述其目的和用于完成的任务可能使用的算法 参数代表什么以及是否有函数值 
+
+* 大段代码 用来完成某个单一功能的多行代码应该有注释 
+
+* 复杂的算法 如果使用了一种特殊的方法用来解决一种问题 应该有注释来表示你是怎么实现的 方便别人看你的代码的时候理解和你自己下次看的时候帮助理解
+
+* Hack 因为浏览器存在差异 所以我们在完成功能的时候通常可能会解决加一下hack代码 用来磨平浏览器之间的差异  这样的hack代码必须有注释 
+
+* 变量名和函数名要注意 变量名就是必须是名词 函数名必须是动词 做一个专业的开发者 
+
+#### 变量名类型透明 
+
+JavaScript中的变量是松散类型的 因此很容易忘记变量包含的数据类型 
+
+使用下三种方式可以缓解这个问题：
+
+1. 初始化变量的时候指定类型 	var name = ''
+2. 使用匈牙利标记法 就是在变量名前多加一个表示类型的字母 var bFound //布尔类型 
+3. 加类型注释 var name /*:Boolean*/ = false
+
+> 以上这三种方式都各有利弊 
+
+
+#### 松散耦合
+
+耦合过紧的代码都会难于维护 不好扩展 
+
+所以应该尽可能的解耦合代码
+
+* 解耦Html 和JavaScript  不能html和js代码混用
+
+* 解耦css 和 JavaScript  js避免操作设置css
+
+* 应用逻辑和事件处理程序解耦  
+
+```
+function handleKeyPress(e) {
+    if (e.keyCode === 13) {
+        document.querySelector('#app').style.display = 'block'
+    }
+}
+
+function handleKeyPress(e) {
+    if (e.keyCode === 13) {
+        showApp()
+    }
+}
+
+function showApp() {
+    document.querySelector('#app').style.display = 'block'
+}
+```
+
+#### 编程实践
+
+* 尊重对象所有权 就是不要修改不属于你的对象 确切的说： 不要为实例或者原型添加属性和方法 不要重新定义已经存在的方法 
+
+* 避免全局变量
+
+* 避免和null比较 在和null的比较的时候应该这样 使用instaceof操作符 使用typeof检查类型 
+
+* 使用常量
+
+### 性能
+
+* 注意作用域 避免全局查找 作用域链越长就越慢 
+
+* 避免使用with语句 with语句会增加作用域链的长度 
+
+* 选择的正确的算法
+
+* 优化循环 减少迭代  简化终止条件 简化循环体 使用后测试循环 展开循环(就是消除循环 不使用循环 而使用重复的函数调用会更快)
+
+
+### 最小化语句数量
+
+JavaScript中的语句数量也影响所执行的速度 完成多个操作的单个语句要比完成单个操作的多个语句快 
+
+* 多个变量申明 应该整合为一个 
+
+```
+var name = ''
+var age = 3
+
+var name = '',
+    age = 3
+```
+
+* 插入迭代值
+
+```
+var name = values[i]
+i++
+
+
+var name = values[i++]
+```
+
+* 使用数组和对象字面量。避免使用构造函数 
+
+
+#### 优化DOM交互 
+
+DOM操作时最慢的一部分 
+
+* 最小化现场更新 因为对dom的更新都会立即显示出来 每次更新浏览器都会重新计算和渲染 就是重排和重绘  这是非常消耗性能的  所以要尽量避免这样的修改 
+
+> 尽量减少dom操作 将多个操作合并成一个  这样更新的次数也会变少 应该使用innerHTML方法或者createDocumentFragment方法来插入dom 
+
+#### 使用事件代理 
+
+注意了： web应用程序大量的事件处理程序和页面响应速度时成负相关的 所以还是尽量使用事件代理吧 
+
+#### 少使用HTMLCollection的访问 比如document.getElementsByTagName document.getElementsByClassName
+
+
+# 新兴的API
+
+### requestAnimationFrame()
+
+大多数电脑显示器的刷新频率都是60Hz 这大概相当于每秒钟重绘60次。大多数浏览器都会对重绘操作加以限制 不让超过显示器的重绘频率 即使超过这个频率用户体验也得不到提升 **因此 最平滑的动画最佳循环价格时1000ms/60 大约是17毫秒的循环间隔**
+
+### css动画的优势是什么 
+
+css变换和动画的优势在于浏览器知道动画什么时候开始 因此浏览器会计算出正确的循环间隔时间 在恰当的时机刷新UI。 但是对于JavaScript动画  浏览器根本不知道什么时候动画开始的 因此就出现了requestAnimationFrame这个方法  这个方法就是用来通知浏览器JavaScript代码要开始执行动画了  这样浏览器就会在某些代码运行过后进行适当的优化  
+
+这个方法接受一个函数 这个函数所要做的工作就是负责改变下一次重绘的时候DOM样式 
+
+
+### page visibility API
+
+不知道用户是不是正在和页面交互一直困扰web开发者的一个问题 如果页面被最小化了或者隐藏了 或者退出到后台了  这时候应该可以将一些操作暂时停掉的 必入轮询等等 
+
+* document.hidden 表示页面是否被隐藏了的布尔值
+
+* document。visibilityState 有四个可能的值 最小化 页面隐藏 等 
+
+* visibilitychange事件  监听这个事件可以做些页面隐藏和展示逻辑 
+
+
+### Geolocation API
+
+地理位置API是最令人兴奋的API 可以获取用户的地理经纬度位置 前提是活得用户的许可 
+
+### File API
+
+不能读取用户本地计算机上的文件一直开发者头疼的问题
+
+
+### web worker
