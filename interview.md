@@ -435,4 +435,109 @@ abstract模式是完全脱离了浏览器的历史记录而自己模拟了一个
 
 ### ES6 ES7 ES8 等等是否跟进
 
-### 不可变对象
+### 不可变对象 
+
+### 事件循环队列题
+
+```
+console.log(1)
+setTimeout(() => {
+    console.log(2)
+    Promise.resolve().then(data => {
+        console.log(3)
+    })
+})
+new Promise((resolve) => {
+    resolve()
+    console.log(4)
+}).then(() => {
+    console.log(5)
+    setTimeout(() => {
+        console.log(6)
+    })
+}).then(() => console.log(7))
+console.log(8)
+```
+
+### 函数申明提升和变量申明提升
+
+```
+console.log(fish1, fish2, fish3)
+var fish1 = function() {
+    console.log('welcom to p1')
+}
+function fish2() {
+    console.log('welcom to p2')
+}
+var fish3 = 'welcome to p3'
+
+var fish1, fish2, fish3;
+console.log(fish1, fish2, fish3)
+```
+
+### this指向问题
+
+```
+var nickname = 'lilei'
+function Person(name) {
+    this.nickname = name
+    this.sayHi = function() {
+        console.log(this.nickname)
+        setTimeout(function() {
+            console.log(this.nickname)
+        }, 1000)
+    }
+}
+
+var Male = {
+    nickname: 'xiaofang'
+    sayHi: () => {
+        console.log(this.nickname)
+    }
+}
+var person = new (Person.bind(Male, 'xiaohong'))
+person.sayHi()
+```
+
+### 按值传递
+
+```
+let object = { a: 0}
+function fun(obj) {
+    obj.a = 1
+    obj = {a: 2}
+    obj.b = 2
+}
+fun(object)
+console.log(object)
+```
+
+### Promise.all async await 
+
+### node的事件循环机制和浏览器的事件循环机制有区别
+
+### vue的v-for中的key为什么要设置呢 
+
+### Object.definedProperty的缺点
+
+### Promise.reject后的代码会执行吗
+
+### Promise的构造函数是同步执行还是异步执行
+
+### vue的组件通信方式
+
+### 多维数组变成一维数组 
+
+### 将驼峰变成下划线 
+
+### Js的变迁阻塞
+
+### 解释性的语言和编译性的语言有什么区别
+
+### vue-cli的webpack配置和webpack的相关配置
+
+### v-if和v-show有什么区别 
+
+### 做项目时遇到哪些难点
+
+### 最近在学什么技术
