@@ -1,3 +1,17 @@
+### 浏览器的解析过程
+
+#### css和js的加载解析过程到底会不会阻塞后面的工作
+
+> 这里要特别注意**解析和渲染两个词的真正的意思 他们不等同 解析是读取字符生成dom数或者cssom数的过程 但是渲染是直接根据render树回流和重绘显示在屏幕上**
+
+1. css的下载和解析过程不会阻塞dom树的解析 根据关键渲染路径就可以知道他们俩的过程的是并行的 
+2. css的下载和解析过程会阻塞render树的渲染 render树需要cssom树
+3. css加载会阻塞后面的js语句的**执行** 
+
+#### DOMContentLoaded事件当页面的内容解析完成之后就会触发该事件
+
+#### load事件就是等页面中所有资源都加载完成之后才会触发 包括css js 图片 视频等等
+
 ### Promise的原理及手写Promise
 
 * new Promise的时候需要传递一个exector执行器 执行器立即执行
@@ -517,8 +531,13 @@ console.log(object)
 ### node的事件循环机制和浏览器的事件循环机制有区别
 
 ### vue的v-for中的key为什么要设置呢 
+当vue更新正在使用v-for渲染的元素列表时 它默认使用就地更新政策 如果数据项的顺序被改变 vue并不会移动dom元素来匹配数据项的顺序 而是就地更新每个元素 并且确保它们在每个索引位置正确渲染 这个模式默认是高效的 但是只是适用于不依赖子组件状态或临时dom状态的列表渲染 为了给Vue一个提示 以便他能跟踪每个节点的身份 从而重用和重新排序现有元素
 
 ### Object.definedProperty的缺点
+
+1. 无法监控数组下标的变化 导致通过数组下标添加元素 不能实时响应
+2. 只能劫持对象的属性 从而需要对每个对象每个属性遍历 如果属性值是对象还需要深度遍历
+3. proxy不仅可以代理对象 还可以代理数组 还可以dialing动态增加的属性
 
 ### Promise.reject后的代码会执行吗
 
@@ -536,8 +555,383 @@ console.log(object)
 
 ### vue-cli的webpack配置和webpack的相关配置
 
-### v-if和v-show有什么区别 
+### v-if和v-show有什么区别
 
+1. v-if是真正的条件渲染 因为他会确保在切换过程中条件块中的事件监听器和子组件适当的被销毁和重建 
+
+2. v-if是惰性渲染的 也就是说如果在初始条件为假的情况下 则什么也不做也不会渲染 直到条件第一次变为真的时候才会渲染 
+
+3. v-show 则不管初始条件是什么 都会渲染 只是通过简单的css切换 
+
+
+***说白了一句话 v-if的实现原理就是动态的增删dom树 v-show的元素就是通过css 的display的属性来切换 这里跟visibility 属性没有半毛钱的关系***
+
+**所以说 v-if有更高的切换开销 而v-show有更高的初始渲染开销 因此如果需要非常频繁的切换 则使用v-show较好 如果很少改变则使用v-if更好** 
+
+### display none 和 visibility hidden 区别 
+
+1. display none 的元素隐藏后不会占据空间 就是不会渲染这个元素的盒子模型 
+
+2. visibility hidden元素空间还是存在只是不可见 
+
+3. display none 触发回流和重绘  但是visibility只是触发重绘
+
+4. display 父元素设置了后子元素全部不可见 visibility设置后子元素不会继承父元素设置
+
+5. display none 则让元素在render树中没有生成对应的盒子模型 所以不占据空间  有些元素是默认display none 就是在dom树中存在但是不占据空间 没有在render树中生成盒子 例如script link等
+
+5. 设置上面两个属性后 js都是可以访问元素的 元素在dom树中
+
+
+#### 注意了 颠覆了我的认知 
+
+v-if就是动态的向dom树增加和删除元素 是真正的增删元素来控制显示和隐藏 
+而v-show只是通过css的属性来控制显示和隐藏 使用的display: none; **但是这里注意 display: none 并不会把元素从dom树上删除 我一直认为这个会删除**
 ### 做项目时遇到哪些难点
 
 ### 最近在学什么技术
+
+### vue中的v-for循环中的key有什么用
+
+### async 和 await 
+
+### var 和 let区别 setTimeout 中var 
+
+### display none 和 visibility hidden 区别
+
+### v-if 和 v-show 区别 
+
+### 洗牌算法 
+
+### es6的对象解构
+
+### flex布局
+
+### 垂直居中
+
+### 绝对定位
+
+### Vuex解释
+
+### 浏览器缓存和no-cache
+
+### 浏览器解析渲染页面过程
+
+### 页面白屏的原因
+
+### 访问速度的优化手段
+
+### 线上有bug怎么调试 
+
+### 发布订阅模式和观察者模式的区别 
+
+#### 观察者模式 
+
+观察者需要**直接**订阅目标事件 在目标发出内容改变的事件后 直接接受事件并作出响应
+
+```
+           fire event
+Subject  <============> Observer
+           Subscribe
+
+```
+
+定义一个DownloadTask类作为观察者
+
+```
+function DownloadTask(id) {
+    this.id = id
+    this.loaded = false
+    this.url = null
+}
+
+DownloadTask.prototype.finish = function(url) {
+    this.url = url
+    this.loaded = true
+    console.log('task' + this.id + 'load data from' + url)
+}
+```
+
+定义一个DownloadTaskList类管理多个下载任务 
+
+```
+function DownloadTaskList() {
+    this.downloadTaskList = []
+}
+
+DownloadTaskList.prototype.getCount = function() {
+    return this.downloadTaskList.length
+}
+
+DownloadTaskList.prototype.get = function(index) {
+    return this.downloadTaskList[index]
+}
+
+DownloadTaskList.prototype.add = function(task) {
+    this.downloadTaskList.push(task)
+}
+
+DownloadTaskList.prototype.remove = function(task) {
+    const count = this.getCount()
+    
+    let i = 0
+    while(i < count) {
+        if (this.downloadTaskList[i] === task) {
+            this.downloadTaskList.splice(i, 1)
+            break;
+        }
+        i++
+    }
+}
+```
+
+
+定义一个被观察对象
+
+```
+function DataHub() {
+    this.downloadTasks = new DownloadTaskList()
+}
+
+DataHub.prototype.addDownloadTask = function(downloadTask) {
+    this.downloadTasks.add(downloadTask)
+}
+
+DataHub.prototype.removeDownloadTask = function(downloadTask) {
+    this.downloadTasks.remove(downloadTask)
+}
+
+DataHub.prototype.notify = function(url) {
+    const count = this.downloadTasks.getCount()
+    for(var i = 0; i < count; i++) {
+        this.downloadTasks.get(i).finish(url)
+    }
+}
+```
+
+
+```
+var datahub = new DataHub()
+
+var task1 = new DownloadTask(1)
+var task2 = new DownloadTask(2)
+
+datahub.addDownloadTask(task1)
+datahub.addDownloadTask(task2)
+
+dataHub.notify('this is a download url')
+```
+
+#### 发布订阅模式
+
+``` 
+            event                   fire event
+Publisher =======> event channel <==============> Subscriber
+                                     subscribe
+``` 
+
+定一个发布者 
+
+```
+function DataHub() {}
+DataHub.prototype.notify = function(url, callback) {
+    callback(url)
+}
+```
+
+
+定一个事件通道
+
+```
+function DownloadManager() {
+    this.events = {}
+    this.uId = -1
+}
+
+DownloadManager.prototype.publish = function(eventType, url) {
+    if (!this.events[eventType]) {
+        return false
+    }
+    
+    var subScribers = this.events[eventType]
+    const count = subScribers.length
+    
+    let i = 0
+    while(i < count) {
+        var subscriber = subscribers[i]
+        subscriber.handler(eventType, subscriber.taskId, url)
+    }
+}
+
+DownloadManager.prototype.subscribe = function(eventType, handler) {
+    if (!this.events[eventType]) {
+        this.events[eventType] = []
+    }
+    
+    var taskId = (++this.uId).toString()
+    this.events[eventType].push({
+        taskId,
+        handler
+    })
+    
+    return taskId
+}
+```
+
+```
+var dataHub = new DataHub()
+
+var downloadManager = new DownloadManager()
+
+var dataloader = function(taskId, url) {
+    console.log(taskId, url)
+}
+
+var task1 = downloadManager.subscribe('dataReady', dataloader)
+
+dataHub.notify('the url', function(url) {
+    downloadManager.publish('dataReady', url)
+})
+```
+
+### vue的双向绑定的原理
+
+### Object.definedProperty 和 Proxy区别
+
+### 事件循环机制 
+
+### nextTick的原理
+
+能够检测Dom更改的API只有MutationObserver了
+
+```
+var target = document.getElementById('someId')
+
+const config = { attributes: true, childList: true, subtree: true}
+
+const callback = function(mutationList, observer) {
+    for(let mutation of mutationList) {
+        if (mutation.type === 'childList') {
+            console.log('a child node has added or removed')
+        }else if (mutation.type === 'attributes') {
+            console.log(mutation.attributeName + 'was modified')
+        }
+    }
+}
+
+const observer = new MutationObserver(callback)
+observer.observe(target, config)
+
+observer.disconnect()
+```
+> nextTick 能确保我们访问到更新后的dom
+
+### 发布订阅模式解释 代理模式各种设计模式
+
+### this的指向 
+
+### apply的实现 
+
+```
+const a = {
+  id: 1,
+  children: [
+    {
+      id: 2
+    },
+    {
+      id: 3,
+      children: [
+        {
+          id: 5,
+          children: [
+            {id: 6}
+          ]
+        }
+      ]
+    },
+    {
+        id: 4
+    },
+  ]
+} 
+
+
+let res = []
+
+function func(id, a) {    
+    if (id === a.id) {
+        res.push(a)
+        getParent(a)
+        
+    }else {
+    
+        for(let i = 0, len = a.children.length; i < len; i++) {
+            a.children[i].parent = a
+            func(id, a.children[i])
+        }
+    }
+}
+
+function getParent(a) {
+    while(a.parent) {
+        res.push(a.parent)
+        a = a.parent
+    }
+}
+```
+### css画三角形 左上角一个三角形 
+
+### var 和 let 和 const的区别
+
+### SSR的原理 
+
+### NDS的原理 
+
+### 从浏览器地址栏输入URL到页面展现的过程
+
+### loader和plugin的区别 
+
+### loader的执行顺序
+
+### less的区别 
+
+### less能定义函数
+
+### 事件循环机制 
+
+### 游戏的SDK接入 
+
+### java和js的区别 
+
+### 怎么判断是node环境还是浏览器环境
+
+### 项目多 
+
+### 归并排序 
+
+### 协商缓存
+
+* 一般情况下 多数服务器默认开启了协商缓存 
+
+> 如何在服务器开启协商缓存和强缓存(这里有待研究)
+
+协商缓存 
+```
+res.setHeader('Cache-Control', 'public, max-age=0')
+res.setHeader('Last-Modified', xxx)
+res.setHeader('ETag', xxx)
+```
+
+强缓存 
+
+```
+res.setHeader('Cache-Control', 'public, max-age=xxx');
+```
+
+强缓存是根据Cache-Control和Expires 其中Expires的服务器的绝对时间 
+Cache-Control max-age是服务器的相对时间 
+
+协商缓存是根据Last-Modifyed 
+
+### cookie 和 session localStorage 
