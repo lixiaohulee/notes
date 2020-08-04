@@ -826,6 +826,14 @@ observer.disconnect()
 ```
 > nextTick 能确保我们访问到更新后的dom
 
+**nextTick的实现原理其实是利用的事件循环机制  要知道js的事件循环机制是每一次循环中的宏任务执行完毕之后  再接着清空所有的微观任务 然后js引擎线程挂起 GUI渲染线程开始渲染**
+
+> nextTick的原理就是： 只要让nextTick中的代码放在UI render步骤后面执行就行了 这样就能访问更新后的DOM了 说白了其实就是利用队列控制的原理来实现的 
+
+宏观任务队列是利用 setImmediate MessageChannel setTimeout 
+微观任务队列是Promise.then k
+如果promise不支持就是把微观队列指向宏观队列 
+
 ### 发布订阅模式解释 代理模式各种设计模式
 
 ### this的指向 
@@ -881,6 +889,8 @@ function getParent(a) {
 }
 ```
 ### css画三角形 左上角一个三角形 
+
+### 伪类和伪元素 
 
 ### var 和 let 和 const的区别
 
