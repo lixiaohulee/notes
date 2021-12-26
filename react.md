@@ -56,3 +56,56 @@
 
 这里感觉应该是React保留了上次渲染中的清除effect回调函数的引用。这个函数属于上一次渲染，他保存着旧的状态。
 
+### useEffect的依赖控制
+
+1. react 不清楚不知道每次re-render的时候  effect对应的函数要做的事件(函数体内容)变化了没有，她没有对比这个函数体相同不相同，所以我们可以告诉他们函数体中依赖的变量是否变化了，这样就能跳过不必要的一些函数执行。
+
+#### 不要对react撒谎
+
+```javascript
+// First render, state is 0
+function Counter() {
+  // ...
+  useEffect(
+    // Effect from first render
+    () => {
+      const id = setInterval(() => {
+        setCount(0 + 1); // Always setCount(1)
+      }, 1000);
+      return () => clearInterval(id);
+    },
+    [] // Never re-runs
+  );
+  // ...
+}
+
+// Every next render, state is 1
+function Counter() {
+  // ...
+  useEffect(
+    // This effect is always ignored because
+    // we lied to React about empty deps.
+    () => {
+      const id = setInterval(() => {
+        setCount(1 + 1);
+      }, 1000);
+      return () => clearInterval(id);
+    },
+    []
+  );
+  // ...
+}
+```
+
+
+
+> 找到最小状态 给effect中传递尽量少的值 会很有帮助
+
+### useReducer
+
+1. 当你想更新一个状态，并且这个状态更新依赖另一个状态的时候，你可能需要用useReducer去替换它们。比如当你写setSomething(something => ....) 这种代码的时候 也许就是使用useReducer的时机到了。
+2. reducer可以让你把组件内发生了什么(只需要提交action就行)跟状态如何响应更新分开表述。
+3. react会保证dispath在组件的声明周期内保持不变。
+
+> 你可以从依赖中去除dispatch，setState，useRef包裹的值，因为react会确保他们是静态的。
+
