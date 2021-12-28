@@ -109,3 +109,25 @@ function Counter() {
 
 > 你可以从依赖中去除dispatch，setState，useRef包裹的值，因为react会确保他们是静态的。
 
+#### 关于children属性
+
+```javascript
+const parent = (props) => {
+  
+  return (
+    <div>{props.children}</div>
+  )
+}
+```
+
+当一个组件重新渲染时 这里指他自己内部的状态引起的渲染时 来自于props的children属性没有变 那么在重新渲染时react就不会访问这个children属性。所以chilren对应的组件不会再重新渲染。这是一种优化手段。称为内容提升。
+
+#### 在使用useMemo之前
+
+1. 如果组件树中国的一个状态放在了比实际位置更高的位置上 不是一个好主意 这是需要状态下移。
+2. 还有内容提升。
+
+
+
+
+
