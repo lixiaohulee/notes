@@ -127,6 +127,76 @@ const parent = (props) => {
 1. 如果组件树中国的一个状态放在了比实际位置更高的位置上 不是一个好主意 这是需要状态下移。
 2. 还有内容提升。
 
+#### 代数效应
+
+代数效应就是让我们可以把做什么和怎么做分开，在js中，代数效应可以让我们自上而下编写代码，当时程序执行可以在不同的函数之间跳跃执行的效果。而这种跳跃执行的目的就是为了将函数式和副作用进行分离，保持函数式编程的同时又能支持副作用操作。
+
+比如： 执行流进入一个函数，顺序从上到下执行，遇到一个副作用操作，则离开当时函数环境， 跳跃到另一个函数执行流，执行副作用，再将副作用的操作结果反馈到当前执行流。再接着用这个结果进行剩下的计算。
+
+实际上： 像await async generator这样的语法类似于函数效应 只不过他们缺陷。比如他们是有传染性的。
+
+```javascript
+async function doSome() {
+  const v1 = do1()
+  const v2 = await do2(v1)  // perform effect and resume with result
+  const v3 = do3(v2)
+  const v4 = await do4(v3) // ...
+  return v4
+}
+
+
+
+
+function* doSome() {
+  const v1 = do1()
+  const v2 = yield do2(v1) // ...
+  const v3 = do3(v2)
+  const v4 = yield do4(v3) // ...
+  return v4
+}
+```
+
+
+
+js中现在没有这样的语法以支持代数效应的实现， 已经有不止一人提出了这样的语法提案。 
+
+
+
+```javascript
+try {
+  const v1 = do1()
+  const v2 = perform '1' // 执行副作用
+  const v3 = do3(v2)
+  const v4 = perform '3' // 执行副作用
+  return v4
+} 
+handle (e) {
+  if (e === '1') {
+    resume 'v2' // 返回到那个执行流  这里甚至可以执行异步逻辑 可以远程获取数据 但对于上面的执行完全是同步的 且没有传染性。
+  }
+  else if (e === '3') {
+    resume 'v4'
+  }
+}
+
+
+// 这个语法跟try catch的不同在于 try catch 一旦throw 抛出错误后面的代码就不会在执行了。 进入catch块中的代码执行完毕后也不会在恢复那个执行流中了。 throw抛出错误的那个环境的变量将全部释放内存收回。
+```
+
+
+
+**React Hooks 实际上是在践行代数效应**
+
+> 当然，除了hooks，Suspense还有Reconciler，都是对代数效应的践行，它们本质上就如我前文所说，在正常的程序流程中，允许我们停下来，去做另外一件事，做完之后，我们可以再从被打断的地方继续往下执行，而另外的那件事，可以是同步的，也可以是异步的，理论上，它的执行过程与我们当前的流程无关，我们仅关心（或根本不关心）它的结果。
+
+
+
+#### PureComponent vs Memo
+
+PureComponent 会浅对比Props和state两个对象决定是否render 但是Memo只会浅对比props 另外Memo也可以用在类组件上。
+
+
+
 
 
 
