@@ -1,0 +1,43 @@
+# React Redux
+
+
+
+## useSelector
+
+**selector函数什么时候才会执行呢**
+
+1. 每当函数组件render(包括initial render 和 re-render)的时候。**除非前后两次render之间selector的函数引用没有变化**。
+2. 每当任何一个action被dispatch的时候并导致state变化的时候。useSelector订阅了Redux store的变化。
+
+
+
+**selector执行完毕后怎么触发更新的**
+
+1. Dispatch action 和 组件render 都会触发selector的执行，当他们同时触发的时候，selector的执行不会被挤压而是叠加多次执行。
+2. 当selector函数执行完毕，返回一个result结果值之后，就会默认执行一次严格全等引用检查，对比本地返回的值是否和前一次selector函数执行的值相等，如果相等那么就是`forced to re-render` 如果相等，那么就不会触发函数re-render。
+3. 严格全等引用比较，useSelector默认使用的严格全等比较`===`  这样的话 如果我们的selector函数返回的直接是一个对象字面量，那么每次对比都是false 进而会每次都会触发函数re-render。
+4. useSelector可以在一个组件中多次调用，每次调用都会单独对Redux store订阅，如果一次dispatch触发了多个selector函数都会返回了新的值，那么这些的新的值仅会触发一次re-render而不是多次，这是因为redux中react的批量更新处理。
+
+
+
+> mapStateToProps 这个函数默认每次返回一个对象，抽取的redux中的值都是这个对象的一个字段，他默认使用的浅比较，如果比较结果不同就会触发更新
+>
+> useSelector不一样，他可以返回任何值，而非仅仅的对象。这个使用它默认使用的全等比较。如果每次都返回一个新对象，那么每次都会强制处罚组件更新。这里有潜在的性能风险。
+
+
+
+**如果使用useSelector抽取多个值，且不想每次都触发re-render 那么可以这样：**
+
+1. 调用useSelector多次，每个都返回单个的值。
+2. 使用Reselect这样类似的第三方库，可以返回多个字段在一个对象中，但仅仅只会在某个字段的值不一样的时候才会返回一个新对象。
+3. 使用`shallowEqual`第二个参数
+
+
+
+## useDispatch
+
+**useDispatch 调用返回的disatch函数引用不变**
+
+1. dispatch函数的引用不会变，除非store的实例变了，store实例和dispatch函数是一一对应的。
+2. 因为dispatch函数引用不会变，所以他不应该成为useEffect或者useCallback的deeps依赖项，但是eslin规则可能不知道这个情况。
+
