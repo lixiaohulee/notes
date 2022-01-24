@@ -14,7 +14,7 @@
 **selector执行完毕后怎么触发更新的**
 
 1. Dispatch action 和 组件render 都会触发selector的执行，当他们同时触发的时候，selector的执行不会被挤压而是叠加多次执行。
-2. 当selector函数执行完毕，返回一个result结果值之后，就会默认执行一次严格全等引用检查，对比本地返回的值是否和前一次selector函数执行的值相等，如果相等那么就是`forced to re-render` 如果相等，那么就不会触发函数re-render。
+2. 当selector函数执行完毕，返回一个result结果值之后，就会默认执行一次严格全等引用检查，对比本地返回的值是否和前一次selector函数执行的值相等，如果相等那么就是`forced to re-render` 如果不相等，那么就不会触发函数re-render。
 3. 严格全等引用比较，useSelector默认使用的严格全等比较`===`  这样的话 如果我们的selector函数返回的直接是一个对象字面量，那么每次对比都是false 进而会每次都会触发函数re-render。
 4. useSelector可以在一个组件中多次调用，每次调用都会单独对Redux store订阅，如果一次dispatch触发了多个selector函数都会返回了新的值，那么这些的新的值仅会触发一次re-render而不是多次，这是因为redux中react的批量更新处理。
 
@@ -40,4 +40,47 @@
 
 1. dispatch函数的引用不会变，除非store的实例变了，store实例和dispatch函数是一一对应的。
 2. 因为dispatch函数引用不会变，所以他不应该成为useEffect或者useCallback的deeps依赖项，但是eslin规则可能不知道这个情况。
+
+
+
+## mapDispatchToProps
+
+1. mapDispatchToProps这个函数接受两个参数，dispatch和ownProps  其中ownProps是可选参数 如果传递了ownProps 那么这个函数会在每次组件props变化的时候重新调用执行，返回新的dispatch相关的函数。
+
+2. 这个函数需要返回一个普通对象，对象中的每一个字段对应的都是一个会使用dispatch的函数，这些字段都会独立的成为组件的props传递给组件内部使用
+
+3. 当在connect函数中传递了mapDispatchToProps这个参数时，那么组件就会不再收到`props.dispatch`这个props了，如果确实还需要这个dispatch，那么可以通过手动的方式传递给组件。
+
+   ```javascript
+   function mapDispatchToprops(dispatch, ownProps) {
+     return {
+       dispatch,
+       ...actionCreator,
+     }
+   }
+   ```
+
+
+
+> mapDispatchToProps 也可以是个普通对象，用对象的方式是官方所提倡的，对象的每个字段对应的值都是一个actionCreator 这样redux就会默认使用bindActionCreator帮我们需要包装。
+
+```javascript
+// 这他妈的就是一个actionCreator 
+function doAddToDoItem(text) {
+  return { type: 'TODO_ADDED', payload: text }
+}
+
+import { increment, decrement, reset } from './counterActions'
+
+const actionCreators = {
+  increment,
+  decrement,
+  reset,
+}
+
+// React Redux does this for you automatically:
+;(dispatch) => bindActionCreators(mapDispatchToProps, dispatch)
+```
+
+
 
