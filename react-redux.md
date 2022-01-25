@@ -84,3 +84,72 @@ const actionCreators = {
 
 
 
+## mapStateToProps
+
+> mapStateToProps是connect函数的第一个参数，用来从store选择组件需要的数据，这个函数需要返回一个对象，包含着组件需要的字段。简称mapState 
+
+##### 这个函数什么时候会执行呢？
+
+1. 每一次store state 变化的时候。
+2. 接受完整的store state 然后返回一个对象。
+
+##### mapStateToProps的定义
+
+1. 接受一个必选参数： 完整的store state 一个可选的参数ownProps 
+2. 返回一个普通对象，对象中的参数将作为props传递给组件，同时ownProps中的参数也将被自动合并成为props。
+3. mapState的返回对象的将决定组件的re-render
+
+##### 关于他的使用
+
+1. mapState函数不应该仅仅作为一个从store抽取组件所需数据的功能函数，他右责任需要重新组织转化组件真正需要的值。
+2. mapState的执行应该是很快的。只要store state 一变化那么跟他绑定的组件就会重新执行，因为这个他就需要执行很快，不然可能影响组件性能。
+3. mapState应该是纯函数且是同步的，他不能有副作用，所以不能在他里面直接更改state或者ownProps，也不能做一些异步操作，如ajax
+
+##### 和性能相关
+
+1. 默认使用`shallow equality` (使用全等`===`比较mapState返回的对象的每一个字段是否相等) **注意这里跟useSelector完全不一样，useSelector是对比的selector函数的返回值，所以如果你在selector函数中返回一个新对象字面量，那么每次比较都会不一样，因为引用地址每次都是新的。但是mapState不一样，即使他每次返回的对象也是新的对象字面量，但是当比较的时候，他默认直接使用的一个对象浅比较，所以他会对返回的对象的每个字段都一一进行全等比较，而不是对这个返回的对象做比较。**
+
+> mapState函数接受state和一个可选的ownProps参数，并且返回的对象决定着组件的re-render 
+
+| --                           | (state) => stateProps                  | (state, ownProps) => mergedStateProps                        |
+| ---------------------------- | -------------------------------------- | ------------------------------------------------------------ |
+| `mapStateToProps` runs when: | store `state` changes                  | store `state` changes or any field of `ownProps` is different |
+| component re-renders when:   | any field of `stateProps` is different | any field of `stateProps` is different or any field of `ownProps` is different |
+
+2. 一些昂贵的操作应该被移动到render函数，reducer函数，或者直接使用useSelector。
+3. mapState函数会在store state变化 或者ownProps变化的时候重新执行，所以只有在你真正需要ownProps的时候再把它传递进来，否则可能造成不必要的重新执行和性能问题
+
+```javascript
+// 定义mapState函数的不一样，那么是否会接受到state和ownProps的情况不一样
+
+function mapStateToProps(state) {
+  console.log(state) // state
+  console.log(arguments[1]) // undefined
+}
+const mapStateToProps = (state, ownProps = {}) => {
+  console.log(state) // state
+  console.log(ownProps) // {}
+}
+
+// It will receive ownProps when the formal definition of the function contains zero or two mandatory parameters:
+
+function mapStateToProps(state, ownProps) {
+  console.log(state) // state
+  console.log(ownProps) // ownProps
+}
+
+function mapStateToProps() {
+  console.log(arguments[0]) // state
+  console.log(arguments[1]) // ownProps
+}
+
+function mapStateToProps(...args) {
+  console.log(args[0]) // state
+  console.log(args[1]) // ownProps
+}
+```
+
+
+
+> useSelector具有缓存功能的，mapState没有
+
