@@ -153,3 +153,15 @@ function mapStateToProps(...args) {
 
 > useSelector具有缓存功能的，mapState没有
 
+
+
+## connectAdvanced
+
+connect函数的基础，没有那么多的配置和限制
+
+## batch 
+
+> batch((fn: Function))
+
+这个`unstable_batchedUpdates`API的别名 
+
