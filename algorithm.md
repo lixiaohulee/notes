@@ -239,3 +239,51 @@ console.log(arr.toString());
 
 ```
 
+
+```
+
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+
+
+function findDuplicateSubtrees(root: TreeNode | null): Array<TreeNode | null> {
+    const res = {};
+    const cache = [];
+
+    const findHelper = (root: TreeNode | null): string => {
+        if (root === null) return '#';
+        
+        const left = findHelper(root.left);
+        const right = findHelper(root.right);
+
+        const subTreeStr = left + ',' + right + ',' + root.val;
+
+        if (cache.find(str => str === subTreeStr)) {
+            if (!res[subTreeStr]) {
+                res[subTreeStr] = root;
+            }
+        } else {
+            cache.push(subTreeStr);
+        }
+
+        return subTreeStr;
+        
+    }
+    findHelper(root);
+
+    return Object.values(res);
+};
+```
+
