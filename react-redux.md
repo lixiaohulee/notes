@@ -155,6 +155,10 @@ function mapStateToProps(...args) {
 
 
 
+**useSelector和mapStateToProps 都应该尽可能的从store中获取少的值， 这样可以确保组件尽在自己需要的时候重新渲染**
+
+
+
 ## connectAdvanced
 
 connect函数的基础，没有那么多的配置和限制
@@ -163,5 +167,21 @@ connect函数的基础，没有那么多的配置和限制
 
 > batch((fn: Function))
 
-这个`unstable_batchedUpdates`API的别名 
+这个`unstable_batchedUpdates`API的别名
+
+
+
+# redux
+
+> redux store 应该只是用来存储那些属于全局的变量，任何不属于全局的变量应考虑放到局部当中。
+
+
+
+### 值的不可变性
+
+值的不可变性并不是不改变值，而是在程序状态改变时，不直接修改当前的数据，而是创建并追踪一个新的数据。
+
+考虑到性能 immutable.js正是做这件事的好手。
+
+js中的原始基本类型本身就是不可变的，例如字符串，数字，boolean，undefined，null。但是像数组和对象这类的他们的值是可以变的。
 
