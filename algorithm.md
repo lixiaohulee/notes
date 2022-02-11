@@ -239,3 +239,222 @@ console.log(arr.toString());
 
 ```
 
+##### 二叉树转为链表	
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+/**
+ Do not return anything, modify root in-place instead.
+ */
+function flatten(root: TreeNode | null): void {
+    if (root === null) return;
+
+    flatten(root.left);
+    flatten(root.right);
+    
+    const left = root.left;
+    const right = root.right;
+
+    root.left = null;
+    root.right = left;
+
+    let current = root;
+    
+    while(current && current.right) {
+        current = current.right;
+    } 
+    current.right = right;
+
+};
+```
+
+##### 最大二叉树
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+
+function constructMaximumBinaryTree(nums: number[]): TreeNode | null {
+    if (nums.length === 0) return null;
+
+    let max = Number.MIN_VALUE;
+    let maxIndex = 0;
+
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] > max) {
+            max = nums[i];
+            maxIndex = i;  
+        }
+    }
+
+    const root = new TreeNode(max);
+
+    root.left = constructMaximumBinaryTree(nums.slice(0, maxIndex));
+    root.right = constructMaximumBinaryTree(nums.slice(maxIndex+1));
+
+    return root;
+};
+```
+
+##### 根据前序遍历和中序遍历恢复二叉树
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
+    if (preorder.length === 0) return null;
+
+    const rootVal = preorder[0];
+    const rootValIndexInOrder = inorder.findIndex((num) => num === rootVal);
+
+    const root = new TreeNode(rootVal);
+
+    root.left = buildTree(preorder.slice(1, rootValIndexInOrder+1), inorder.slice(0, rootValIndexInOrder));
+    root.right = buildTree(preorder.slice(rootValIndexInOrder+1), inorder.slice(rootValIndexInOrder+1));
+
+    return root;
+};
+```
+
+##### 根据中序遍历和后续遍历恢复二叉树
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
+    if (postorder.length === 0) return null;
+
+    const rootVal = postorder[postorder.length-1];
+    const rootValIndexInInorder = inorder.findIndex(num => num === rootVal);
+
+    const root = new TreeNode(rootVal);
+
+    root.left = buildTree(inorder.slice(0, rootValIndexInInorder), postorder.slice(0, rootValIndexInInorder));
+    root.right = buildTree(inorder.slice(rootValIndexInInorder+1), postorder.slice(rootValIndexInInorder, postorder.length-1));
+
+    return root;
+};
+```
+
+##### 二叉树的序列化和反序列化
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+/*
+ * Encodes a tree to a single string.
+ */
+function serialize(root: TreeNode | null): string {
+    let res = '';
+
+    const preOrder = (root: TreeNode | null): void => {
+        if (root === null) {
+            res += '#,';
+            return;
+        }
+
+        res += `${root.val},`;
+
+        preOrder(root.left);
+        preOrder(root.right);
+    }
+
+    preOrder(root);
+
+    return res;
+};
+
+/*
+ * Decodes your encoded data to tree.
+ */
+function deserialize(data: string): TreeNode | null {
+    if (!data) return null;
+
+    const nodeList = data.split(',');
+
+    const helper = (nodeList: Array<string>) => {
+        if (!nodeList.length) return null;
+
+        const node = nodeList.shift();
+
+        if (node === '#') return null;
+
+        const root = new TreeNode(+node);
+
+        root.left = helper(nodeList);
+        root.right = helper(nodeList);
+
+        return root;
+    }
+
+    return helper(nodeList);
+};
+
+
+/**
+ * Your functions will be called as such:
+ * deserialize(serialize(root));
+ */
+```
+
