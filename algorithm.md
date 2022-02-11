@@ -324,6 +324,8 @@ function constructMaximumBinaryTree(nums: number[]): TreeNode | null {
 ##### 根据前序遍历和中序遍历恢复二叉树
 
 ```javascript
+
+
 /**
  * Definition for a binary tree node.
  * class TreeNode {
@@ -456,5 +458,34 @@ function deserialize(data: string): TreeNode | null {
  * Your functions will be called as such:
  * deserialize(serialize(root));
  */
+
+
+function findDuplicateSubtrees(root: TreeNode | null): Array<TreeNode | null> {
+    const res = {};
+    const cache = [];
+
+    const findHelper = (root: TreeNode | null): string => {
+        if (root === null) return '#';
+        
+        const left = findHelper(root.left);
+        const right = findHelper(root.right);
+
+        const subTreeStr = left + ',' + right + ',' + root.val;
+
+        if (cache.find(str => str === subTreeStr)) {
+            if (!res[subTreeStr]) {
+                res[subTreeStr] = root;
+            }
+        } else {
+            cache.push(subTreeStr);
+        }
+
+        return subTreeStr;
+        
+    }
+    findHelper(root);
+
+    return Object.values(res);
+};
 ```
 
