@@ -325,7 +325,6 @@ function constructMaximumBinaryTree(nums: number[]): TreeNode | null {
 
 ```javascript
 
-
 /**
  * Definition for a binary tree node.
  * class TreeNode {
@@ -486,6 +485,68 @@ function findDuplicateSubtrees(root: TreeNode | null): Array<TreeNode | null> {
     findHelper(root);
 
     return Object.values(res);
+};
+```
+
+
+
+> 如果当前的节点要做的事情需要通过左右子树的计算结果推导出来 那么就是需要用到后续遍历的时候了。
+
+
+
+##### 二叉搜索子树的最大键值和
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function maxSumBST(root: TreeNode | null): number {
+    let maxSum = 0;
+
+    const helper = (root: TreeNode | null) => {
+        if (root === null) {
+            return {
+                isBST: true,
+                maxLeftTree: Number.MIN_SAFE_INTEGER,
+                minRightTree: Number.MAX_SAFE_INTEGER,
+                sum: 0,
+            }
+        }
+
+        const leftRes = helper(root.left);
+        const rightRes = helper(root.right);
+
+        if (leftRes.isBST && rightRes.isBST && root.val > leftRes.maxLeftTree && root.val < rightRes.minRightTree) {
+            const sum = root.val + leftRes.sum + rightRes.sum;
+            maxSum = Math.max(maxSum, sum);
+            return {
+                isBST: true,
+                maxLeftTree: Math.max(root.val, leftRes.maxLeftTree),
+                minRightTree: Math.min(root.val, rightRes.minRightTree),
+                sum,
+            }
+        } else {
+            return {
+                isBST: false
+            }
+        }
+        
+    }
+
+    helper(root);
+
+    return maxSum;
 };
 ```
 
