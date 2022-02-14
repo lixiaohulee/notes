@@ -185,3 +185,199 @@ connect函数的基础，没有那么多的配置和限制
 
 js中的原始基本类型本身就是不可变的，例如字符串，数字，boolean，undefined，null。但是像数组和对象这类的他们的值是可以变的。
 
+
+
+### 什么是纯函数
+
+1. 一个函数的返回结果只依赖于他的参数。
+2. 在执行过程中没有副作用：没有副作用的意思就是比如：他不会修改参数，不会改变函数外面的值。**不会产生外部可观察的变化**
+
+```javascript
+// foo不是纯函数，因为他的返回结果依赖了参数以外的值，那么他的返回结果就不可预料
+const a = 1;
+const foo = (b) => a + b;
+foo(2);
+
+// foo现在是纯函数，因为只要参数确定 那么返回的结果永远是固定的。
+const a = 1;
+const foo = (x,b) => x + b;
+foo(1,2);
+
+// 执行过程中不能有副作用，就是不能产生函数外部的可观察的变化。
+
+// 这里foo是纯函数，因为它没有产生外部可观察的变化。函数执行完毕后，counter对象没有变化。
+const a = 1;
+const counter = { x: 1 };
+const foo = (obj, b) => {
+  return obj.x + b;
+}
+foor(counter, 2);
+
+// 这里foo函数就不是纯函数了，因为counter对象在函数执行完毕后被改变了。
+const a = 1;
+const counter = { x: 1 };
+const foo = (obj, b) => {
+  obj.x = 2;
+  return obj.x + b;
+}
+
+
+```
+
+
+
+### 为什么我们要关注纯函数呢 
+
+因为纯函数意味着靠谱，稳定。他不会产生什么意料之外的行为，也不会对外部产生影响。这样的话对于我们的程序来说测试起来，调试起来都是非常方便的。
+
+
+
+### 动手实现一个redux
+
+```javascript
+
+const createStore = (stateChanger) => {
+  let state = null;
+
+  const listeners = [];
+  const getState = () => state;
+  const dispatch = (action) => {
+    state = stateChanger(state, action);
+    listeners.forEach(listener => listener());
+  }
+
+  const subscribe = (listener) => listeners.push(listener);
+
+  dispatch({});
+  
+  return {
+    getState,
+    dispatch,
+    subscribe,
+  }
+}
+
+
+export default createStore;
+
+
+
+
+import createStore from './store';
+
+
+
+function reducer(state, action) {
+  if (!state) {
+    return {
+      title: {
+        text: 'React.js 小书',
+        color: 'red',
+      },
+      content: {
+        text: 'React.js 小书内容',
+        color: 'blue',
+      }
+    }
+  }
+
+  switch (action.type) {
+    case 'UPDATE_TITLE_TEXT':
+      return {
+        ...state,
+        title: {
+          ...state.title,
+          text: action.text,
+        }
+      } 
+    case 'UPDATE_TITLE_COLOR': 
+      return {
+        ...state,
+        title: {
+          ...state.title,
+          color: action.color,
+        }
+      }
+    default: 
+      return state;
+  }
+}
+
+const store = createStore(reducer);
+
+
+const renderTitle = (newTitle, oldTitle = {}) => {
+  console.log(newTitle === oldTitle);
+  if (newTitle === oldTitle) return;
+
+
+  console.log('render title');
+  const titleDom = document.getElementById('title');
+
+  titleDom.innerHTML = newTitle.text;
+  titleDom.style.color = newTitle.color;
+}
+
+const renderContent = (newContent, oldContent = {}) => {
+  if (newContent === oldContent) return;
+
+  console.log('render content');
+  const contentDom = document.getElementById('content');
+
+  contentDom.innerHTML = newContent.text;
+  contentDom.style.color = newContent.color;
+}
+
+const renderApp = (newState, oldState = {}) => {
+  console.log(newState === oldState);
+  if (newState === oldState) return;
+
+  console.log('render app');
+  renderTitle(newState.title, oldState.title);
+  renderContent(newState.content, oldState.content);
+}
+
+
+let oldState = store.getState();
+
+store.subscribe(() => {
+  const newState = store.getState();
+
+  renderApp(newState, oldState);
+
+  oldState = newState;
+});
+
+window.onload = function() {
+  renderApp(store.getState());
+
+
+  const p1 = new Promise((resolve, reject) => {
+    window.setTimeout(() => {
+      store.dispatch({
+        type: 'UPDATE_TITLE_COLOR',
+        color: 'green'
+      })
+
+      resolve('color changed');
+    }, 3000);
+  });
+
+  const p2 = new Promise((resolve, reject) => {
+    window.setTimeout(() => {
+      store.dispatch({
+        type: 'UPDATE_TITLE_TEXT',
+        text: '更新后的名称'
+      })
+
+      resolve('text changed');
+    }, 5000);
+  });
+
+}
+```
+
+
+
+> 很显然 reducer就是一个彻头彻尾的纯函数。
+
