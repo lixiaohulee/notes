@@ -324,7 +324,6 @@ function constructMaximumBinaryTree(nums: number[]): TreeNode | null {
 ##### 根据前序遍历和中序遍历恢复二叉树
 
 ```javascript
-
 /**
  * Definition for a binary tree node.
  * class TreeNode {
@@ -547,6 +546,39 @@ function maxSumBST(root: TreeNode | null): number {
     helper(root);
 
     return maxSum;
+};
+```
+
+
+
+### 二叉树的最近公共祖先
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: TreeNode | null): TreeNode | null {
+	if (root === null) return null;
+    if (root === p || root === q) return root;
+
+    const left = lowestCommonAncestor(root.left, p, q);
+    const right = lowestCommonAncestor(root.right, p, q);
+
+    if (left && right) return root;
+    if (left === null && right === null) return null;
+    
+    return left === null ? right : left;
 };
 ```
 
