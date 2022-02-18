@@ -582,3 +582,31 @@ function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: Tree
 };
 ```
 
+### 二分查找
+
+```javascript
+const binarySearch = (nums: number[], left: number, right: number, target: number): number => {
+    if (left > right) return -1;
+
+    const mid = Math.floor((left + right) / 2);
+
+    if (nums[mid] === target) {
+        return mid;
+    }
+
+    if (target < nums[mid]) {
+        return binarySearch(nums, left, mid-1, target);
+    }
+
+    if (target > nums[mid]) {
+        return binarySearch(nums, mid+1, right, target);
+    }
+}
+
+function search(nums: number[], target: number): number {
+    return binarySearch(nums, 0, nums.length-1, target);
+};
+```
+
+
+
