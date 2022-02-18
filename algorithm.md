@@ -610,3 +610,184 @@ function search(nums: number[], target: number): number {
 
 
 
+### 另一棵树的子树
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+
+const isSameTree = (root: TreeNode | null, subRoot: TreeNode | null): boolean => {
+    if (root === null && subRoot === null) return true;
+
+    return root && subRoot && root.val === subRoot.val && isSameTree(root.left, subRoot.left) && isSameTree(root.right, subRoot.right);
+}
+
+function isSubtree(root: TreeNode | null, subRoot: TreeNode | null): boolean {
+    if (root === null && subRoot === null) return true;
+    if (root === null && subRoot !== null) return false;
+    return isSameTree(root, subRoot) || isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
+};
+```
+
+
+
+### 恢复二叉搜索树
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+/**
+ Do not return anything, modify root in-place instead.
+ */
+
+const getMaximum = (root: TreeNode | null): TreeNode | null => {
+    if (root === null) return null;
+    
+    let maximumVal = Number.MIN_SAFE_INTEGER;
+    let maximumNode = null;
+
+    const preOrder = (root: TreeNode | null): void => {
+        if (root === null) return;
+
+        if (root.val > maximumVal) {
+            maximumVal = root.val;
+            maximumNode = root;
+        }
+
+        preOrder(root.left);
+        preOrder(root.right);
+    }
+
+    preOrder(root);
+
+    return maximumNode;
+}
+const getMinimum = (root: TreeNode | null): TreeNode | null => {
+    if (root === null) return null;
+    
+    let minimumVal = Number.MAX_SAFE_INTEGER;
+    let minimumNode = null;
+
+    const preOrder = (root: TreeNode | null): void => {
+        if (root === null) return;
+
+        if (root.val < minimumVal) {
+            minimumVal = root.val;
+            minimumNode = root;
+        }
+
+        preOrder(root.left);
+        preOrder(root.right);
+    }
+
+    preOrder(root);
+
+    return minimumNode;
+}
+function recoverTree(root: TreeNode | null): void {
+    if (root === null) return;
+
+    const maximumLeft = getMaximum(root.left);
+    const minimumRight = getMinimum(root.right);
+
+    if (maximumLeft && minimumRight) {
+        if (root.val < maximumLeft.val && root.val > minimumRight.val) {
+            const temp = minimumRight.val;
+            minimumRight.val = maximumLeft.val;
+            maximumLeft.val = temp;
+            return;
+        } 
+    }
+
+    if (maximumLeft) {
+        if (root.val < maximumLeft.val) {
+            // change
+            const temp = maximumLeft.val;
+            maximumLeft.val = root.val;
+            root.val = temp;
+            return;
+        }
+    }
+
+    if (minimumRight) {
+        if (root.val > minimumRight.val) {
+            // channge
+            const temp = minimumRight.val;
+            minimumRight.val = root.val;
+            root.val = temp;
+            return;
+        }
+    }
+
+    recoverTree(root.left);
+    recoverTree(root.right);
+};
+```
+
+### 扁平二叉搜索树
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function increasingBST(root: TreeNode | null): TreeNode | null {
+    if (root === null) return null;
+
+    const left = increasingBST(root.left);
+    const right = increasingBST(root.right);
+
+    if (left === null) {
+        root.right = right;
+        root.left = null;
+        return root;
+    }
+
+    let temp = left;
+
+    while(temp.right) {
+        temp = temp.right;
+    }
+
+    temp.right = root;
+    root.left = null;
+    root.right = right;
+
+    return left;
+};
+```
+
