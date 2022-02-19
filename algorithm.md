@@ -885,3 +885,31 @@ function zigzagLevelOrder(root: TreeNode | null): number[][] {
 };
 ```
 
+### 路径和
+
+```javascript
+function pathSum(root: TreeNode | null, targetSum: number): number[][] {
+    const res = [];
+
+    const helper = (root: TreeNode | null, path: string, sum: number) => {
+        if (root === null) return;
+
+        if (root.left === null && root.right === null) {
+            sum += root.val;
+            if (sum === targetSum) {
+                path += root.val;
+                res.push(path.split(','));
+            }
+            return;
+        }
+
+        helper(root.left, path+root.val+',', sum+root.val);
+        helper(root.right, path+root.val+',', sum+root.val);
+    } 
+     
+    helper(root, '', 0);
+
+    return res;
+};
+```
+
