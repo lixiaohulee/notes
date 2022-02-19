@@ -832,3 +832,56 @@ const quickSort = (nums: number[], left: number, right: number) => {
 }
 ```
 
+### 二叉树的锯齿形层序遍历
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function zigzagLevelOrder(root: TreeNode | null): number[][] {
+    if (root === null) return [];
+
+    const res = [];
+
+    const queue = [];
+    queue.push(root);
+
+    let isEvenLevel = false;
+
+    while(queue.length) {
+        const len = queue.length;
+
+        const temp = []; 
+        for(let i = 0; i < len; i++) {
+            const node = queue.shift();
+
+            isEvenLevel ? temp.unshift(node.val) : temp.push(node.val);
+
+            if (node.left) {
+                queue.push(node.left);
+            }
+
+            if (node.right) {
+                queue.push(node.right);
+            }
+        }
+
+        isEvenLevel = !isEvenLevel;
+        res.push(temp);
+    }
+
+    return res;
+};
+```
+
