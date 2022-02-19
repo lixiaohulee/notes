@@ -791,3 +791,44 @@ function increasingBST(root: TreeNode | null): TreeNode | null {
 };
 ```
 
+
+### 快速排序
+
+快速排序的最坏情况是O(n2)  最好情况是O(nlogn) 平均复杂度是O(nlogn)
+
+算法在时间渐近曲线一样的情况下。就可以考虑算法的基本常量操作的复杂度了 
+
+```javascript
+function sortArray(nums: number[]): number[] {
+    quickSort(nums, 0, nums.length-1);
+    return nums;
+};
+
+
+const quickSort = (nums: number[], left: number, right: number) => {
+    if (left >= right) return;
+
+    let _left = left;
+    let _right = right;
+
+    const pivot = nums[_left];
+
+    while (_left < _right) {
+        while(_left < _right &&  nums[_right] >= pivot) {
+            _right--;
+        }
+        nums[_left] = nums[_right];
+
+        while(_left < _right && nums[_left] <= pivot ) {
+            _left++;
+        } 
+        nums[_right] = nums[_left];
+    }
+
+    nums[_left] = pivot;
+    quickSort(nums, left, _left-1);
+    quickSort(nums, _left+1, right);
+    
+}
+```
+
