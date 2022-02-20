@@ -913,3 +913,69 @@ function pathSum(root: TreeNode | null, targetSum: number): number[][] {
 };
 ```
 
+
+### 有序链表转换二叉搜索树
+
+```javascript
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+const listToArray = (head: ListNode | null): number[] => {
+    if (head === null) return [];
+
+    const nums = [];
+
+    let temp = head;
+    while(temp) {
+        nums.push(temp.val);
+        temp = temp.next;
+    }
+
+    return nums;
+}
+
+function sortedListToBST(head: ListNode | null): TreeNode | null {
+    if (head === null) return null;
+
+    const nums = listToArray(head);
+
+    const buildBST = (nums: number[]): TreeNode | null => {
+        if (nums.length === 0) return null;
+
+        const mid = Math.floor((nums.length-1) / 2);
+
+        const root = new TreeNode(nums[mid]);
+
+        root.left = buildBST(nums.slice(0, mid));
+        root.right = buildBST(nums.slice(mid+1));
+
+        return root; 
+    }
+
+    return buildBST(nums);
+};
+```
+
