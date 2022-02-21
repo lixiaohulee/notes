@@ -979,3 +979,114 @@ function sortedListToBST(head: ListNode | null): TreeNode | null {
 };
 ```
 
+```javascript
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+const getMiddleNode = (left: ListNode, right: ListNode | null): ListNode | null => {
+    
+    // 快慢指针法找出中间节点 原理是fast走两步 slow走一步 那么fast就是slow的2倍 
+    // 等到fast走完整个链表时 那么slow一定是才走了链表的一半 那么slow就是中间节点了 (注意奇数个和偶数个)
+    let fast = left;
+    let slow = left;
+
+    // 如果fast === null 那么有偶数个节点
+    // 如果fast.next === null 那么有奇数个节点
+    while(fast !== right && fast.next !== right) {
+        fast = fast.next;
+        fast = fast.next;
+        slow = slow.next;
+    }
+
+    return slow;
+}
+
+function sortedListToBST(head: ListNode | null): TreeNode | null {
+    if (head === null) return null;
+
+    const buildBST = (left: ListNode | null, right: ListNode | null): TreeNode | null => {
+        if (left === right) return null;
+
+        const middleNode = getMiddleNode(left, right);
+
+        const root = new TreeNode(middleNode.val);
+
+        root.left = buildBST(left, middleNode);
+        root.right = buildBST(middleNode.next, right);
+
+        return root; 
+    }
+
+    return buildBST(head, null);
+};
+```
+
+
+### 完全二叉树的遍历
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function countNodes(root: TreeNode | null): number {
+    let lHeight = 0; 
+    let rHeight = 0;
+
+    let l = root;
+    let r = root;
+
+    while(l) {
+        lHeight++;
+        l = l.left;
+    }
+
+    while(r) {
+        rHeight++;
+        r = r.right;
+    }
+
+    if (lHeight === rHeight) {
+        return Math.pow(2, lHeight) -1;
+    }
+
+    return 1 + countNodes(root.left) + countNodes(root.right);
+};
+```
+
+
+
+
