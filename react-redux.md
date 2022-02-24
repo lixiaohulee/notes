@@ -394,3 +394,212 @@ window.onload = function() {
 
 > 因为redux中的reducer函数是对store state需要做immutable修改的，所以对于每一层都会做copy，这样就会显得难以理解和容易出错，并且还有性能上的问题。因此**state应该是尽可能的扁平化**
 
+
+
+# 谈谈redux
+
+
+
+### redux是什么
+
+redux是一个可预测的状态管理库。它只是负责和专注于状态管理，所以它并不只是能应用在react中，任何UI渲染库或者说任何需要状态的地方，都可以是它的使用场景。
+
+redux本身是没有触发react或者任何UI库更新的能力的。它只能存储我们的状态，并在状态改变的时候通知状态改变了而已。
+
+
+
+### redux是如何管理状态的
+
+1. 以对象的形式在全局存储维护一份状态数据
+
+2. 约定了一套修改状态的模版路径，提高修改数据的门槛，以禁止维护的状态可以被任意修改，任何对数据的修改必须走redux提供的模版路径，从而达到状态修改可预测。
+
+3. 实现了一个发布订阅模式，在状态改变的时候方便通知消费者状态已经更改。
+
+   
+
+> 他妈的，redux没啥。就这么点东西。
+
+
+
+### redux 和 react-redux什么关系
+
+redux仅仅是状态管理。它没有驱动react在状态变化的以后触发更新的能力，从而让状态和UI保持一致。
+
+> 我认为任何触发UI库更新的操作一定是来自于UI库本身。那么在一个react应用中，redux状态变更要同步到react一定也得调用react的更新api
+
+**显然，react-redux就他妈的是干这件事的。**
+
+react-redux夹在redux和react中间，像桥一样，链接起redux和react。在状态变更的时候，触发react更新，同步状态。
+
+
+
+### react-redux 是怎么做的呢
+
+记住这三个东西
+
+1. Context  通过context提供了嵌套组件可以方便访问store的能力。无论组件层次多深，无需通过props层层传递，就可以访问store。
+2. 高阶组件  高阶组件是一个函数，这个函数接受一个组件，返回一个新的组件。实际上在react-redux中它所做的就是通过context拿到store，然后再订阅store的state的变化，在状态变化时候获取最新的状态以props的形式传递包装的组件。
+3. 能触发react更新的api  目前触发更新的方式有多种，比如setState等等。
+
+
+
+react-redux说白了就是一边订阅了redux的状态变化，一边借助react提供的api去在状态变更的时候触发re-render
+
+
+
+### 不得不说下Context
+
+为什么说是不得不说下context呢？
+
+原因就是react-redux深度使用了context的能力。如果没有context那么react-redux可能比较难做，为什么会这么说呢？
+
+1. 没有context  任何一个组件访问store的方式将很不方便，可能只能通过props层层传递，这简直就是噩梦。
+2. 凡是消费了context的组件，都将在context的value变化的时候强制更新，react-redux使用了这一特点。
+
+至于context这个东西怎么实现的，大概看了下跟fiberNode有关系，通过`Object.is` 这个方法对比value是否变化，变化的话forceUpdate 组件。
+
+
+
+### 提一下immutability
+
+immutability 就是值不可变性。这一概念可以联系到函数式编程的纯函数。它讲究的是一个值一旦生成，在内存中申请空间并存储之后，如果在程序运行过程中针对这个值有更改，那么不直接修改内存中的这个值，而是重新申请一份内存空间，在旧值的基础上再做更改，从而生成一份新的数据并开始追踪。
+
+显然在js中，对基本类型的值的修改默认就是不可变的。比如`let a = 2;` 这时你要修改这个变量的话`a = 3;` 那么过程就是：重新申请一个内存，填充一个3，释放a = 2的内存空间并被垃圾回收，这个过程就体现了不可变性。
+
+但是如果你对一个对象进行修改可能就会出现问题，比如下面这样
+
+```javascript
+const obj = {
+  name: 'lixiaohu',
+}
+
+// 我要修改name了
+const newObj = obj;
+newObj.name = 'lee';   //这样你改了对象的内容，但是对象的指针还是没有变，newObj === obj; 直接对比对象看不出变化。
+
+// 如果这样就可以
+const newObj = { ...obj };
+newObj.name = 'lee';   //newObj !== obj  
+```
+
+
+
+讲redux为什么提这个东西呢？
+
+因为redux或者react整个体系中，都是靠对象的浅层比较来对比值是否变化了的，从而决定下一步的动作是啥。如果不这样做，那就没法判断出状态的变改了，这就会出问题。
+
+redux当前使用immer这个库来转门做这件事，它的不同点在于它实现了结构化数据的结构共享，就是说，当对象化变化的时候，它只让节点的值和其祖先节点都变化，其他的都保持不变，实现结构共享。这对于内存节省和变更效率有很大帮助。
+
+
+
+### 最后放段redux的简单实现吧
+
+```javascript
+// createStore.js
+export default function createStore(reducer) {
+  if (typeof reducer !== 'function') {
+    throw new TypeError(`reducer must a function`);
+  }
+
+  let currentState = null;
+  
+  const listeners = [];
+
+  const subscribe = (listener) => {
+    if (typeof listener !== 'function') {
+      throw new TypeError('listener must be a function');
+    }
+
+    listeners.push(listener);
+  }
+  
+
+  const dispatch = (action) => {
+    if (Object.prototype.toString(action) !== '[object Object]') {
+      throw new TypeError('action must be a object');
+    }
+
+    const nextState = reducer(currentState, action);
+    
+    if (nextState !== currentState) {
+      listeners.forEach(listener => listener());
+    }
+
+    currentState = nextState;
+  }
+
+  const getState = () => {
+    return currentState;
+  }
+
+  // initial
+  dispatch({});
+
+
+  return {
+    getState,
+    dispatch,
+    subscribe,
+  }
+}
+
+// connect.js
+import React from 'react';
+import { ReactReduxContext } from "./Provider"
+
+export default function connect(mapStateToProps, mapDispatchToProps) {
+  
+
+  return function connectHOC(WrappedComp) {
+    
+
+    return function AdvancedComp(props) {
+
+      const store = React.useContext(ReactReduxContext);
+
+
+      const [state, setState] = React.useState(() => store.getState());
+      
+      React.useEffect(() => {
+        store.subscribe(() => {
+          const curState = store.getState();
+          
+          setState(curState);
+        })
+      }, [])
+      
+      const storeState = store.getState();
+      console.log(storeState);
+      const dispatch = store.dispatch;
+
+      const mapState = mapStateToProps(storeState);
+
+      const mapDispatch = mapDispatchToProps &&  mapDispatchToProps(dispatch);
+
+      const finalProps = { ...mapState, ...mapDispatch || {}, ...props};
+
+      return (
+        <WrappedComp {...finalProps}/>
+      )
+    } 
+  } 
+}
+
+//Provider.js
+import React from 'react';
+
+export const ReactReduxContext = React.createContext({});
+
+export default function Provider(props) {
+
+  const store = props.store;  
+
+  return (
+    <ReactReduxContext.Provider value={store}>
+      {props.children}
+    </ReactReduxContext.Provider>
+  )
+}
+```
+
