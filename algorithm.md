@@ -832,3 +832,261 @@ const quickSort = (nums: number[], left: number, right: number) => {
 }
 ```
 
+### 二叉树的锯齿形层序遍历
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function zigzagLevelOrder(root: TreeNode | null): number[][] {
+    if (root === null) return [];
+
+    const res = [];
+
+    const queue = [];
+    queue.push(root);
+
+    let isEvenLevel = false;
+
+    while(queue.length) {
+        const len = queue.length;
+
+        const temp = []; 
+        for(let i = 0; i < len; i++) {
+            const node = queue.shift();
+
+            isEvenLevel ? temp.unshift(node.val) : temp.push(node.val);
+
+            if (node.left) {
+                queue.push(node.left);
+            }
+
+            if (node.right) {
+                queue.push(node.right);
+            }
+        }
+
+        isEvenLevel = !isEvenLevel;
+        res.push(temp);
+    }
+
+    return res;
+};
+```
+
+### 路径和
+
+```javascript
+function pathSum(root: TreeNode | null, targetSum: number): number[][] {
+    const res = [];
+
+    const helper = (root: TreeNode | null, path: string, sum: number) => {
+        if (root === null) return;
+
+        if (root.left === null && root.right === null) {
+            sum += root.val;
+            if (sum === targetSum) {
+                path += root.val;
+                res.push(path.split(','));
+            }
+            return;
+        }
+
+        helper(root.left, path+root.val+',', sum+root.val);
+        helper(root.right, path+root.val+',', sum+root.val);
+    } 
+     
+    helper(root, '', 0);
+
+    return res;
+};
+```
+
+
+### 有序链表转换二叉搜索树
+
+```javascript
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+const listToArray = (head: ListNode | null): number[] => {
+    if (head === null) return [];
+
+    const nums = [];
+
+    let temp = head;
+    while(temp) {
+        nums.push(temp.val);
+        temp = temp.next;
+    }
+
+    return nums;
+}
+
+function sortedListToBST(head: ListNode | null): TreeNode | null {
+    if (head === null) return null;
+
+    const nums = listToArray(head);
+
+    const buildBST = (nums: number[]): TreeNode | null => {
+        if (nums.length === 0) return null;
+
+        const mid = Math.floor((nums.length-1) / 2);
+
+        const root = new TreeNode(nums[mid]);
+
+        root.left = buildBST(nums.slice(0, mid));
+        root.right = buildBST(nums.slice(mid+1));
+
+        return root; 
+    }
+
+    return buildBST(nums);
+};
+```
+
+```javascript
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+const getMiddleNode = (left: ListNode, right: ListNode | null): ListNode | null => {
+    
+    // 快慢指针法找出中间节点 原理是fast走两步 slow走一步 那么fast就是slow的2倍 
+    // 等到fast走完整个链表时 那么slow一定是才走了链表的一半 那么slow就是中间节点了 (注意奇数个和偶数个)
+    let fast = left;
+    let slow = left;
+
+    // 如果fast === null 那么有偶数个节点
+    // 如果fast.next === null 那么有奇数个节点
+    while(fast !== right && fast.next !== right) {
+        fast = fast.next;
+        fast = fast.next;
+        slow = slow.next;
+    }
+
+    return slow;
+}
+
+function sortedListToBST(head: ListNode | null): TreeNode | null {
+    if (head === null) return null;
+
+    const buildBST = (left: ListNode | null, right: ListNode | null): TreeNode | null => {
+        if (left === right) return null;
+
+        const middleNode = getMiddleNode(left, right);
+
+        const root = new TreeNode(middleNode.val);
+
+        root.left = buildBST(left, middleNode);
+        root.right = buildBST(middleNode.next, right);
+
+        return root; 
+    }
+
+    return buildBST(head, null);
+};
+```
+
+
+### 完全二叉树的遍历
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function countNodes(root: TreeNode | null): number {
+    let lHeight = 0; 
+    let rHeight = 0;
+
+    let l = root;
+    let r = root;
+
+    while(l) {
+        lHeight++;
+        l = l.left;
+    }
+
+    while(r) {
+        rHeight++;
+        r = r.right;
+    }
+
+    if (lHeight === rHeight) {
+        return Math.pow(2, lHeight) -1;
+    }
+
+    return 1 + countNodes(root.left) + countNodes(root.right);
+};
+```
+
+
+
+
