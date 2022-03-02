@@ -198,6 +198,174 @@ PureComponent 会浅对比Props和state两个对象决定是否render 但是Memo
 
 
 
+# React
 
+### JSX
 
+1. jsx是meta公司发明推出的一种javascript扩展语法，它不属于ECMA语法规范。它需要由对应的转换器转为真正的js语言内容。
+2. React推荐将逻辑和标记放在一种称为组件的耦合单元中，实现**关注点分离**
+3. jsx本身就是一个表达式，所以他可以作为函数的参数或返回值，甚至使用在if或者for循环等中。在jsx的花括号中可以加入任何合法的js表达式。
+4. jsx可以防止XSS跨站脚本攻击。
+5. babel会将jsx转为js的函数调用`React.createElement()` 这个函数调用执行完毕后，会返回一个js对象。一个对象可以认为是一个节点，react通过这个些节点构造虚拟dom树。
 
+```javascript
+// JSX
+const element = (
+  <h1 className="greeting">
+    Hello, world!
+  </h1>
+);
+
+//Babel转移后的结果
+const element = React.createElement(
+  'h1',
+  {className: 'greeting'},
+  'Hello, world!'
+);
+
+// React.createElement函数执行后的结果。 这个对象就是React元素
+const element = {
+  type: 'h1',
+  props: {
+    className: 'greeting',
+    children: 'Hello, world!'
+  }
+};
+```
+
+**React.createElement 执行后返回的对象就是React元素**
+
+### 元素渲染
+
+1. React通过diff对比，只会进行必要的更新，来保持状态和DOM的统一。
+
+### 组件和props
+
+1. 组件允许你讲UI拆分成独立且可复用的代码片段，这个片段需要独立设计和构思。
+2. 概念上，组件就是接受props同时返回React元素的JavaScript函数。
+3. 建议从组件自身命名，而不是根据调用组件的上下文环境命名。
+4. 组件足够复杂或被多处使用的时候，就要考虑拆分复用。
+5. 所有的组件都必须像纯函数一样对待自己的props。
+
+### State和生命周期
+
+1. setState方法会对state进行合并，并且是浅合并。
+2. React数据流是自上向下的的单向数据流。
+
+### 事件处理
+
+1. [`SyntheticEvent`](https://zh-hans.reactjs.org/docs/events.html) 代表一个合成事件，React做了这个处理，你可以不用关心浏览器兼容性。
+2. 在class组件中，要注意事件处理函数的this问题，需要手动绑定或者箭头函数处理。
+
+### 条件渲染
+
+1. 可以用变量配合if语句的方式条件渲染。
+2. 可以使用三元运算符来判断
+3. 可以使用逻辑与和逻辑或 注意0的坑。
+
+### 列表 & Key
+
+1. React使用数组的map方法来通过数组变成React元素的过程。
+2. key如果不传默认使用的数组的索引Index
+3. 在一个数组上下文中，数组的key应该是确定唯一的，不推荐使用数组的索引Index来做key，这样在数组顺序变化的时候可能会有隐患。
+
+### 表单
+
+1. input textarea select 组件都可以通过value属性同React的状态链接到一起，这样他们就都能变成受控组件了
+2. 特殊的是： input type 等于file 它的value只读，所以它只能是个非受控组件。
+3. 如果给受控组件的value属性指定一个undefined或者null 那么还是能够输入的 
+
+### 状态提升
+
+1. 当多个组件需要反应数据的相同变化的时候，那么就需要将状态提升。状态提升就像寻找两个子树的最近公共祖先。
+
+### 组合和继承
+
+1. React推荐使用组合来实现组件间的代码重用
+2. 组合的方式：包含或者特例
+
+```javascript
+// 包含关系
+// 包含关系可以通过props.children来实现
+function FancyBorder(props) {
+  return (
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      {props.children}
+    </div>
+  );
+}
+
+function WelcomeDialog() {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        Welcome
+      </h1>
+      <p className="Dialog-message">
+        Thank you for visiting our spacecraft!
+      </p>
+    </FancyBorder>
+  );
+}
+
+// 包含关系还可以是自行约定的props属性来实现。这就像vue的slot插槽一样。
+function SplitPane(props) {
+  return (
+    <div className="SplitPane">
+      <div className="SplitPane-left">
+        {props.left}
+      </div>
+      <div className="SplitPane-right">
+        {props.right}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <SplitPane
+      left={
+        <Contacts />
+      }
+      right={
+        <Chat />
+      } />
+  );
+}
+
+```
+
+```javascript
+// 特例这种关系平时开发中特别常见，比如还有原子组件Button 特例组件AddButton
+function Dialog(props) {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        {props.title}
+      </h1>
+      <p className="Dialog-message">
+        {props.message}
+      </p>
+    </FancyBorder>
+  );
+}
+
+function WelcomeDialog() {
+  return (
+    <Dialog
+      title="Welcome"
+      message="Thank you for visiting our spacecraft!" />
+  );
+}
+```
+
+3. React并没有发现需要通过继承来实现组件层次的
+
+### React哲学
+
+1. 根据UI划分组件层级，组件的设计划分根据单一职责原则。一个组件只负责一个功能。
+2. 自上向下或者自下向上开发组件的静态版本，静态版本不需要考虑交互逻辑。
+3. 确定UI state的最小且完整表示，其实这一步就是建模，数据模型。一条原则，dont repeat youself 。
+4. 确定state的位置，这个问题就是一个树的最近公共祖先的问题。
+5. 构建反向数据流，其实就是子组件产生数据，存储到父亲组件，再共享到所以兄弟组件。 这可以理解成一种数据双向绑定。
