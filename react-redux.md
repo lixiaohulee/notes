@@ -395,6 +395,12 @@ window.onload = function() {
 > 因为redux中的reducer函数是对store state需要做immutable修改的，所以对于每一层都会做copy，这样就会显得难以理解和容易出错，并且还有性能上的问题。因此**state应该是尽可能的扁平化**
 
 
+### 关于mapStateToProps useSelector store.subscribe 的执行。
+
+1. 只要有dispatch提交，无论这个dispatch是否最后更改了store state 那么store.subscribe 都会执行，源码有证
+2. 只要store state变化了。那么mapState useSelector 就会执行  至于他们执行完毕算出来的值会不会触发组件更新。则需要比较。
+
+
 
 # 谈谈redux
 
