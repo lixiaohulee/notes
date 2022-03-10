@@ -1239,6 +1239,47 @@ function insertIntoBST(root: TreeNode | null, val: number): TreeNode | null {
 ```
 
 
+### BST 删除值
+
+```javascript
+function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
+    const helper = (root: TreeNode | null, key: number): TreeNode | null => {
+        if (root === null) return null;
+
+        if (root.val === key) {
+            let left = root.left;
+            let right = root.right;
+
+            root = null;
+
+            if (right === null) return left;
+
+            let temp = right;
+            while (temp.left) {
+                temp = temp.left;
+            }
+            temp.left = left;
+
+            return right;
+        }
+
+        if (key < root.val) {
+            root.left = helper(root.left, key);
+        }
+
+        if (key > root.val) {
+            root.right = helper(root.right, key);
+        }
+
+        return root;
+    };
+
+  return helper(root, key);
+
+};
+```
+
+
 
 
 
