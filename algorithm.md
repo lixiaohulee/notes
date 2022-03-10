@@ -1204,6 +1204,40 @@ function searchBST(root: TreeNode | null, val: number): TreeNode | null {
 ```
 
 
+### BST 插入数值
+
+```javascript
+function insertIntoBST(root: TreeNode | null, val: number): TreeNode | null {
+
+    if (root === null) return new TreeNode(val);
+
+    const helper = (root: TreeNode | null, val: number): void => {
+        if (root === null) return;
+
+        if (val < root.val) {
+            if (root.left === null) {
+                root.left = new TreeNode(val);
+            } else {
+                helper(root.left, val);
+            }
+        }
+
+        if (val > root.val) {
+            if (root.right === null) {
+                root.right = new TreeNode(val);
+            } else {
+                helper(root.right, val);
+            }
+        }
+    };
+
+    helper(root, val);
+
+    return root;
+
+};
+```
+
 
 
 
