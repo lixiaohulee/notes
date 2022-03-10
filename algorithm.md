@@ -1309,6 +1309,42 @@ function numTrees(n: number): number {
 };
 ```
 
+```javascript
+function numTrees(n: number): number {
+    
+    const cache = new Map();
+    const getBSTNums = (n: number): number => {
+        if (cache.get(n)) {
+            return cache.get(n);
+        }
+
+        if (n === 0 || n == 1) return 1;
+
+        let sum = 0;
+
+        let i = 1;
+        while(i <= n) {
+            let left = i - 1;
+            let right = n - i
+
+            const bstNumsFromLeft = getBSTNums(left);
+            const bstNumsFromRight = getBSTNums(right);
+
+            sum += bstNumsFromLeft * bstNumsFromRight;
+            i++;
+        }
+
+        cache.set(n, sum);
+
+        return sum;
+    }
+
+
+    return getBSTNums(n);
+};
+```
+
+
 
 
 
