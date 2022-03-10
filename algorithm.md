@@ -1173,6 +1173,28 @@ function isValidBST(root: TreeNode | null): boolean {
 
 
 
+```javascript
+function isValidBST(root: TreeNode | null): boolean {
+    const helper = (
+    root: TreeNode | null,
+    min: TreeNode | null,
+    max: TreeNode | null
+  ) => {
+    if (root === null) return true;
+
+    if (min && root.val >= min.val) return false;
+    if (max && root.val <= max.val) return false;
+
+    return helper(root.left, root, max) && helper(root.right, min, root);
+  };
+
+  return helper(root, null, null);
+};
+```
+
+
+
+
 
 
 
