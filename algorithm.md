@@ -1352,6 +1352,7 @@ function generateTrees(n: number): Array<TreeNode | null> {
     const generateHelper = (low: number, high: number) => {
         if (low > high) return [null];
 
+       // 为什么在这里必须得用low high 而不是上面的直接是数字呢 因为上面只是计算数量 所以不在乎具体的值是多少的 但是这里需要构建真正的树 所以是跟值相关的 那么就不能用上面的方式了
         const res = [];
 
         for (let i = low; i <= high; i++) {
