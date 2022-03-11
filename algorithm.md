@@ -1345,6 +1345,39 @@ function numTrees(n: number): number {
 ```
 
 
+### 不同的BST II
+
+```javascript
+function generateTrees(n: number): Array<TreeNode | null> {
+    const generateHelper = (low: number, high: number) => {
+        if (low > high) return [null];
+
+        const res = [];
+
+        for (let i = low; i <= high; i++) {
+            const leftSubTreeArr = generateHelper(low, i - 1);
+            const rightSubTreeArr = generateHelper(i + 1, high);
+
+        // 这里其实就是个对左子树类型和右子树的类型做的排列组合
+        for (let j = 0; j < leftSubTreeArr.length; j++) {
+            for (let k = 0; k < rightSubTreeArr.length; k++) {
+                const root = new TreeNode(i);
+
+                root.left = leftSubTreeArr[j];
+                root.right = rightSubTreeArr[k];
+
+                // 到这里 算是构建完了一颗真正的二叉搜索子树
+                res.push(root);
+            }
+        }
+        }
+
+        return res;
+    };
+
+    return generateHelper(1, n);
+};
+```
 
 
 
