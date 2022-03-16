@@ -1380,6 +1380,44 @@ function generateTrees(n: number): Array<TreeNode | null> {
 };
 ```
 
+### 翻转二叉树以匹配先序遍历
+
+```javascript
+function flipMatchVoyage(root: TreeNode | null, voyage: number[]): number[] {
+    let res = [];
+
+    let i = 0;
+
+    const helper = (root: TreeNode | null, parentNode: TreeNode | null) => {
+        if (root === null || res.includes(-1)) return;
+
+            if (root.val === voyage[i]) {
+                i++;
+                } else if (
+                    parentNode &&
+                    parentNode.right &&
+                    parentNode.right.val === voyage[i]
+                    ) {
+                    i++;
+                    const temp = root;
+                    root = parentNode.right;
+                    parentNode.right = temp;
+
+                    res.push(parentNode.val);
+                } else {
+                res = [-1];
+            }
+
+        helper(root.left, root);
+        helper(root.right, root);
+    };
+
+    helper(root, null);
+
+    return res;
+};
+```
+
 
 
 
