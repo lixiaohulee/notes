@@ -1419,6 +1419,43 @@ function flipMatchVoyage(root: TreeNode | null, voyage: number[]): number[] {
 ```
 
 
+function addOneRow(root: TreeNode | null, val: number, depth: number): TreeNode | null {
+    let newRoot = root;
+    const helper = (root: TreeNode | null, curDepth: number) => {
+        if (root === null) return;
+
+        if (depth-1 === 0) {
+            const node = new TreeNode(val);
+            node.left = root;
+            newRoot = node;
+            return;
+        } 
+
+        if (curDepth === depth-1) {
+            const left = root.left;
+            const right = root.right;
+
+            const node1 = new TreeNode(val);
+            const node2 = new TreeNode(val);
+
+            root.left = node1;
+            root.right = node2;
+
+            node1.left = left;
+            node2.right = right;
+
+
+            return;
+        }
+
+        helper(root.left, curDepth+1);
+        helper(root.right, curDepth+1);
+    }
+
+    helper(root, 1);
+
+    return newRoot;
+};
 
 
 
