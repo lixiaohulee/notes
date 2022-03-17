@@ -1460,6 +1460,41 @@ function addOneRow(root: TreeNode | null, val: number, depth: number): TreeNode 
 };
 ```
 
+```javascript
+function addOneRow(root: TreeNode | null, val: number, depth: number): TreeNode | null {
+    if (root === null) return null;
+
+    if (depth === 1) {
+        const node = new TreeNode(val);
+        node.left = root;
+
+        return node;
+    }
+
+    if (depth === 2) {
+        const left = root.left;
+        const right = root.right;
+
+        const node1 = new TreeNode(val);
+        const node2 = new TreeNode(val);
+
+        root.left = node1;
+        root.right = node2;
+
+        node1.left = left;
+        node2.right = right;
+
+        return root;
+    }
+
+    root.left = addOneRow(root.left, val, depth - 1);
+    root.right = addOneRow(root.right, val, depth - 1);
+
+    return root;
+};
+```
+
+
 
 
 
