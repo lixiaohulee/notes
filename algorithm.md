@@ -1494,7 +1494,74 @@ function addOneRow(root: TreeNode | null, val: number, depth: number): TreeNode 
 };
 ```
 
+### 二叉树最大宽度
 
+```
+interface MyNode {
+    node: TreeNode,
+    position: bigint,
+}
+
+function widthOfBinaryTree(root: TreeNode | null): bigint {
+    if (root === null) return BigInt(0);
+
+    const res: MyNode[][] = [];
+
+    const queue: MyNode[] = [];
+
+    queue.push({
+        node: root,
+        position: 1n,
+    });
+
+    while(queue.length) {
+        const length = queue.length;
+
+        const level: MyNode[] = [];
+
+        for(let i = 0; i < length; i++) {
+            const { node, position } = queue.shift();
+            
+            level.push({
+                node,
+                position, 
+            });
+
+            if (node.left) {
+                queue.push({
+                    node: node.left,
+                    position: position * 2n
+                });
+            }
+
+            if (node.right) {
+                queue.push({
+                    node: node.right,
+                    position: position * 2n + 1n
+                })
+            }
+        }
+        res.push(level);
+    }
+
+    let max = BigInt(Number.MIN_SAFE_INTEGER);
+    
+    for (let j = 0; j < res.length; j++) {
+        const level = res[j];
+
+        const length = level.length;
+
+        const low = level[0];
+        const high = level[length-1];
+
+        const curLevelWidth = high.position - low.position + 1n;
+
+        max = max > curLevelWidth ? max : curLevelWidth;
+    }
+
+    return max;
+};
+```
 
 
 
