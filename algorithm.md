@@ -1621,4 +1621,32 @@ function widthOfBinaryTree(root: TreeNode | null): bigint {
 ```
 
 
+### 二叉树的最大直径
+
+```javascript
+function diameterOfBinaryTree(root: TreeNode | null): number {
+  let maxDiameter = Number.MIN_SAFE_INTEGER;
+
+  const traverse = (root: TreeNode | null): number => {
+    if (root === null) return 0;
+
+    const leftDepth = traverse(root.left);
+    const rightDepth = traverse(root.right);
+
+    const leftDiameter = leftDepth - 1;
+    const rightDiameter = rightDepth - 1;
+
+    const curMaxDiameter = leftDiameter + rightDiameter + 2;
+
+    maxDiameter = maxDiameter > curMaxDiameter ? maxDiameter : curMaxDiameter;
+
+    return 1 + Math.max(leftDepth, rightDepth);
+  };
+
+  traverse(root);
+
+  return maxDiameter;
+}
+```
+
 
