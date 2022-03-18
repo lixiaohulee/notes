@@ -1564,7 +1564,61 @@ function widthOfBinaryTree(root: TreeNode | null): bigint {
 ```
 
 
+```
+interface MyNode {
+  node: TreeNode;
+  position: bigint;
+}
+function widthOfBinaryTree(root: TreeNode | null): bigint {
+  if (root === null) return 0n;
 
+  const queue = [];
+
+  queue.push({
+    node: root,
+    position: 1n,
+  });
+
+  let maxWidth = 0n;
+
+  while (queue.length) {
+    const length = queue.length;
+
+    const level = [];
+    for (let i = 0; i < length; i++) {
+      const { node, position } = queue.shift();
+
+      level.push({
+        node,
+        position,
+      });
+
+      if (node.left) {
+        queue.push({
+          node: node.left,
+          position: position * 2n,
+        });
+      }
+
+      if (node.right) {
+        queue.push({
+          node: node.right,
+          position: position * 2n + 1n,
+        });
+      }
+    }
+
+    const low = level[0];
+    const high = level[level.length - 1];
+
+    const currentLevelWidth = BigInt(high.position - low.position) + 1n;
+
+    maxWidth = maxWidth > currentLevelWidth ? maxWidth : currentLevelWidth;
+  }
+
+  return maxWidth;
+}
+```
 
 
 
