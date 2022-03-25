@@ -1650,3 +1650,48 @@ function diameterOfBinaryTree(root: TreeNode | null): number {
 ```
 
 
+### 出现最多的子元素树和
+
+```javascript
+function findFrequentTreeSum(root: TreeNode | null): number[] {
+  const sumMap = new Map<number, number>();
+
+  const traverse = (root: TreeNode | null): number => {
+    if (root === null) return 0;
+
+    const leftSum = traverse(root.left);
+    const rightSum = traverse(root.right);
+
+    const currentSum = root.val + leftSum + rightSum;
+
+    if (sumMap.has(currentSum)) {
+      const count = sumMap.get(currentSum);
+      sumMap.set(currentSum, count + 1);
+    } else {
+      sumMap.set(currentSum, 0);
+    }
+
+    return currentSum;
+  };
+
+  traverse(root);
+
+  let maxSumCount = Number.MIN_SAFE_INTEGER;
+
+  let res = [];
+  for (let [sum, count] of sumMap.entries()) {
+    if (count > maxSumCount) {
+      res = [sum];
+      maxSumCount = count;
+    } else if (count === maxSumCount) {
+      res.push(sum);
+    }
+  }
+
+  return res;
+}
+```
+
+
+
+
