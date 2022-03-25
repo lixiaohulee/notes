@@ -1729,6 +1729,35 @@ function trimBST(
 }
 ```
 
+### 二叉树剪枝
+
+```javascript
+function pruneTree(root: TreeNode | null): TreeNode | null {
+  const trimHelper = (root: TreeNode | null): [TreeNode | null, boolean] => {
+    if (root === null) return [null, true];
+
+    let [left, leftNeedTrimming] = trimHelper(root.left);
+    let [right, rightNeedTrimming] = trimHelper(root.right);
+
+    if (leftNeedTrimming && rightNeedTrimming) {
+      if (root.val === 0) {
+        return [null, true];
+      } else {
+        root.left = left;
+        root.right = right;
+        return [root, false];
+      }
+    }
+
+    root.left = left;
+    root.right = right;
+    return [root, false];
+  };
+
+  return trimHelper(root)[0];
+}
+```
+
 
 
 
