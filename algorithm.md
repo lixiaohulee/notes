@@ -1692,6 +1692,45 @@ function findFrequentTreeSum(root: TreeNode | null): number[] {
 }
 ```
 
+### 修剪二叉搜索树
+
+```javascript
+function trimBST(
+  root: TreeNode | null,
+  low: number,
+  high: number
+): TreeNode | null {
+  if (root === null) return null;
+
+  const left = trimBST(root.left, low, high);
+  const right = trimBST(root.right, low, high);
+
+  if (root.val >= low && root.val <= high) {
+    root.left = left;
+    root.right = right;
+
+    return root;
+  }
+
+  if (right === null) {
+    root = null;
+    return left;
+  }
+
+  let temp = right;
+
+  while (temp.left) {
+    temp = temp.left;
+  }
+  temp.left = left;
+
+  root = null;
+  return right;
+}
+```
+
+
+
 
 
 
