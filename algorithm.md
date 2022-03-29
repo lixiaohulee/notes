@@ -1778,6 +1778,64 @@ function pruneTree(root: TreeNode | null): TreeNode | null {
 ```
 
 
+### 相似叶子
+
+数组比字符串拼接快
+
+
+```typescript
+function leafSimilar(root1: TreeNode | null, root2: TreeNode | null): boolean {
+  const leaf1 = [];
+  const leaf2 = [];
+
+  const traverse = (root: TreeNode | null, leaf: number[]): string => {
+    if (root === null) return;
+
+    traverse(root.left, leaf);
+    traverse(root.right, leaf);
+
+    if (root.left === null && root.right === null) {
+      leaf.push(root.val);
+    }
+  };
+
+  traverse(root1, leaf1);
+  traverse(root2, leaf2);
+
+  if (leaf1.length !== leaf2.length) return false;
+
+  for (let i = 0; i < leaf1.length; i++) {
+    if (leaf1[i] !== leaf2[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+```
+
+
+
+```kotlin
+function leafSimilar(root1: TreeNode | null, root2: TreeNode | null): boolean {
+
+  const traverse = (root: TreeNode | null, leaf: string): string => {
+    if (root === null) return "";
+
+    const leaf1 = traverse(root.left, leaf);
+    const leaf2 = traverse(root.right, leaf);
+
+    if (root.left === null && root.right === null) {
+      return leaf1 + leaf2 + root.val + ",";
+    }
+
+    return leaf1 + leaf2;
+  };
+
+  return traverse(root1, "") === traverse(root2, "");
+}
+```
+
 
 
 
