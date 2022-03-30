@@ -1837,6 +1837,29 @@ function leafSimilar(root1: TreeNode | null, root2: TreeNode | null): boolean {
 ```
 
 
+### 两数之和 BST
+
+```javascript
+function findTarget(root: TreeNode | null, k: number): boolean {
+  const set = new Set<number>();
+
+  const traverse = (root: TreeNode | null): boolean => {
+    if (root === null) return false;
+
+    if (set.has(k - root.val)) {
+      return true;
+    }
+
+    set.add(root.val);
+
+    return traverse(root.left) || traverse(root.right);
+  };
+
+  return traverse(root);
+}
+```
+
+
 
 
 
