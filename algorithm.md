@@ -1859,6 +1859,47 @@ function findTarget(root: TreeNode | null, k: number): boolean {
 }
 ```
 
+### 根据二叉树前序和后序遍历还原二叉树
+
+```
+function constructFromPrePost(
+  preorder: number[],
+  postorder: number[]
+): TreeNode | null {
+  const length = preorder.length;
+
+  if (length === 0) return null;
+  if (length === 1) {
+    return new TreeNode(preorder[0]);
+  }
+
+  const leftSubTreeRootVal = preorder[1];
+
+  let leftSubTreeRootValIndexOfPostOrder = -1;
+
+  for (let i = 0; i < length; i++) {
+    if (postorder[i] === leftSubTreeRootVal) {
+      leftSubTreeRootValIndexOfPostOrder = i;
+      break;
+    }
+  }
+
+  const leftSubTreeNodeCount = leftSubTreeRootValIndexOfPostOrder + 1;
+
+  const root = new TreeNode(preorder[0]);
+
+  root.left = constructFromPrePost(
+    preorder.slice(1, leftSubTreeNodeCount + 1),
+    postorder.slice(0, leftSubTreeNodeCount)
+  );
+  root.right = constructFromPrePost(
+    preorder.slice(leftSubTreeNodeCount + 1),
+    postorder.slice(leftSubTreeNodeCount, length - 1)
+  );
+
+  return root;
+}
+```
 
 
 
