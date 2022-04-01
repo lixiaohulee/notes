@@ -1861,7 +1861,7 @@ function findTarget(root: TreeNode | null, k: number): boolean {
 
 ### 根据二叉树前序和后序遍历还原二叉树
 
-```
+```javascript
 function constructFromPrePost(
   preorder: number[],
   postorder: number[]
