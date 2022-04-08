@@ -1901,6 +1901,50 @@ function constructFromPrePost(
 }
 ```
 
+interface TargetNodeInfo {
+  depth: number;
+  parent: TreeNode | null;
+}
+
+function isCousins(root: TreeNode | null, x: number, y: number): boolean {
+  let xInfo: TargetNodeInfo;
+  let yInfo: TargetNodeInfo;
+
+  const traverse = (
+    root: TreeNode | null,
+    parent: TreeNode | null,
+    depth: number
+  ): void => {
+    if (root === null) return;
+
+    if (xInfo && yInfo) return;
+
+    if (root.val === x) {
+      xInfo = {
+        depth,
+        parent,
+      };
+    }
+
+    if (root.val === y) {
+      yInfo = {
+        depth,
+        parent,
+      };
+    }
+
+    traverse(root.left, root, depth + 1);
+    traverse(root.right, root, depth + 1);
+  };
+
+  traverse(root, null, 0);
+
+  if (xInfo.depth === yInfo.depth && xInfo.parent.val !== yInfo.parent.val) {
+    return true;
+  }
+
+  return false;
+}
 
 
 
