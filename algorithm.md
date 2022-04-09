@@ -1952,4 +1952,23 @@ function isCousins(root: TreeNode | null, x: number, y: number): boolean {
 
 ```
 
+### 两数之和
+
+```
+function twoSum(nums: number[], target: number): number[] {
+    const map = new Map<number, number>();
+
+    for (let i = 0; i < nums.length; i++) {
+        const another = target - nums[i];
+        if (map.has(another)) {
+            const anotherIndex = map.get(another);
+            return [anotherIndex, i];
+        }
+
+        map.set(nums[i], i);
+    }
+
+    return [-1, -1];
+};
+```
 
