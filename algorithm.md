@@ -1954,7 +1954,7 @@ function isCousins(root: TreeNode | null, x: number, y: number): boolean {
 
 ### 两数之和
 
-```
+```javascript
 function twoSum(nums: number[], target: number): number[] {
     const map = new Map<number, number>();
 
