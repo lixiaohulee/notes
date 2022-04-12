@@ -1972,3 +1972,27 @@ function twoSum(nums: number[], target: number): number[] {
 };
 ```
 
+不要动不动就去套架子  搞的那么复杂  有必要吗
+
+```javascript
+function maxSubArray(nums: number[]): number {
+    let maxSum = Number.MIN_SAFE_INTEGER;
+
+    let currentSum = 0;
+
+    for (let i = 0; i < nums.length; i++) {
+        currentSum += nums[i];
+
+        if (currentSum > 0) {
+            maxSum = Math.max(maxSum, currentSum);
+        } else {
+            currentSum = 0;
+            maxSum = Math.max(maxSum, nums[i]);
+        }
+    }
+
+    return maxSum;
+};
+```
+
+
