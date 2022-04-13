@@ -2035,4 +2035,56 @@ function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: Tree
 };
 ```
 
+### 奇偶数
 
+```javascript
+
+function isEvenOddTree(root: TreeNode | null): boolean {
+    const queue = [];
+
+    queue.push(root);
+
+    let level = 0;
+    while(queue.length > 0) {
+        const length = queue.length;
+
+        const isEvenLevel = level % 2 === 0;
+
+        const levelArr = [];
+
+        for (let i = 0; i < length; i++) {
+            const node = queue.shift();
+
+            if (isEvenLevel) {
+                if (node.val % 2 === 0) {
+                    return false;
+                }
+
+                if (levelArr.length > 0 && node.val <= levelArr[levelArr.length-1]) {
+                    return false;
+                }
+            } else {
+                if (node.val % 2 !== 0) {
+                    return false;
+                }
+                
+                if (levelArr.length > 0 && node.val >= levelArr[levelArr.length-1]) {
+                    return false;
+                }
+            }
+
+            levelArr.push(node.val);
+
+            if (node.left) {
+                queue.push(node.left);
+            }
+
+            if (node.right) {
+                queue.push(node.right);
+            }
+        }
+        level++;
+    }
+    return true;
+};
+```
