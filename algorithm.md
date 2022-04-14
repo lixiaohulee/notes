@@ -2088,3 +2088,106 @@ function isEvenOddTree(root: TreeNode | null): boolean {
     return true;
 };
 ```
+
+### 两数相加
+
+```javascript
+
+这个需要优化卧槽
+
+function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {
+
+    let head = null;
+
+
+    let needCarry = false;
+    while(l1 && l2) {
+        let sum = l1.val + l2.val;
+
+        if (needCarry) {
+            sum += 1;
+            needCarry = false;
+        }
+
+        if (sum >= 10) {
+            sum = sum % 10;
+            needCarry = true;
+        } else {
+            needCarry = false
+        }
+
+        if (head === null) {
+            head = new ListNode(sum);
+        } else {
+            let current = head;
+            while(current.next) {
+                current = current.next;
+            }
+            current.next = new ListNode(sum);
+        }
+
+        l1 = l1.next;
+        l2 = l2.next;
+    }
+
+    while(l1) {
+        let sum = l1.val;
+        if (needCarry) {
+            sum += 1;
+        }
+
+        if (sum >= 10) {
+            needCarry = true;
+            sum = sum % 10;
+        } else {
+            needCarry = false;
+        }
+
+        if (head === null) {
+            head = new ListNode(sum);
+        } else {
+            let current = head;
+            while(current.next) {
+                current = current.next;
+            }
+            current.next = new ListNode(sum);
+        }
+        l1 = l1.next;
+    }
+    
+    while(l2) {
+        let sum = l2.val;
+        if (needCarry) {
+            sum += 1;
+        }
+
+        if (sum >= 10) {
+            needCarry = true;
+            sum = sum % 10;
+        } else {
+            needCarry = false;
+        }
+
+        if (head === null) {
+            head = new ListNode(sum);
+        } else {
+            let current = head;
+            while(current.next) {
+                current = current.next;
+            }
+            current.next = new ListNode(sum);
+        }
+        l2 = l2.next;
+    }
+
+    if (needCarry) {
+        let current = head;
+        while(current.next) {
+            current = current.next;
+        }
+        current.next = new ListNode(1);
+    }
+
+    return head;
+}
+```
